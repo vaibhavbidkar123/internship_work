@@ -2,6 +2,7 @@ from tkinter import ttk
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
+from datetime import datetime
 
 class Tab:
     def __init__(self,new_tab_object):
@@ -41,14 +42,18 @@ class Tab:
             self.text_widget.delete("1.0",tk.END)
             self.text_widget.config(state=tk.DISABLED)
     
-    def searchBtnClick(self,general_search_string,pid,tid,flagValue):
-        self.general_search(general_search_string,pid,tid,flagValue)
+    def searchBtnClick(self,general_search_string,pid,tid,flagValue,timestamp_from_obj,timestamp_to_obj):
+        self.general_search(general_search_string,pid,tid,flagValue,timestamp_from_obj,timestamp_to_obj)
     
-    def general_search(self,searchText,pid,tid,flagValue):
+    def general_search(self,searchText,pid,tid,flagValue,timestampFrom,timestampTo):
         self.text_widget.config(state=tk.NORMAL)
         self.text_widget.delete("1.0",tk.END)
         pid_list=pid.split(",")
         tid_list=tid.split(",")
+        timeRecieved=False
+        time_to_check_format='%H:%M:%S.%f'
+        if(timestampFrom!="" and timestampTo!=""):
+            timeRecieved=True
         content=True
         try:
             with open(self.file_path,"r", encoding="ANSI", errors="replace") as f:
@@ -59,14 +64,14 @@ class Tab:
                         temp = content.split(":")
                         content_split=[":".join(temp[0:3])] + temp[3:]
                         content_split_first_part=content_split[0].split()
-                        # content_time=content_split_first_part[1]
-                        # content_time_obj=datetime.strptime(content_time,time_to_check_format).time()
+                        content_time=content_split_first_part[1]
+                        content_time_obj=datetime.strptime(content_time,time_to_check_format).time()
                         content_pid=content_split_first_part[2]
                         content_tid=content_split_first_part[3]
                         content_flagValue=content_split_first_part[4]
 
-                        if pid or tid or searchText or flagValue:
-                            if (not pid or content_pid in pid_list) and (not tid or content_tid in tid_list) and (searchText.casefold() in content.casefold()) and (content_flagValue==flagValue or flagValue==""):
+                        if pid or tid or searchText or flagValue or timeRecieved:
+                            if (not pid or content_pid in pid_list) and (not tid or content_tid in tid_list) and (searchText.casefold() in content.casefold()) and (content_flagValue==flagValue or flagValue=="")  and ((timestampFrom=="" and timestampTo=="") or (timestampFrom <= content_time_obj <= timestampTo) ):
                                 self.text_widget.insert(tk.INSERT,content)
                         #No entry in any field, display entire contents
                         else:
@@ -79,7 +84,7 @@ class Tab:
                     else:
                         #If content is not in default LOG line format, control come here
                         #All fields should be empty except general search for this to execute
-                        if not pid and not tid and flagValue=="" and searchText in content:
+                        if not pid and not tid and flagValue==""and searchText in content and timeRecieved==False:
                             # if content in list(cfg.breakpointsLineNum.keys()):
                             #     startIndex=cfg.text_widget.index(INSERT)
                             #     endIndex=startIndex.split(".")[0]+".end"
