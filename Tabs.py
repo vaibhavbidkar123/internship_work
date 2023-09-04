@@ -8,8 +8,8 @@ class Tab:
     def __init__(self,new_tab_object):
         self.tab_frame=ttk.Frame(new_tab_object)
         self.text_widget=tk.Text(self.tab_frame,wrap=tk.WORD)
-        self.text_widget.pack(side=tk.LEFT,fill=tk.X,expand=True)
-        self.tab_frame.grid(row=4,column=0)
+        self.text_widget.pack(side=tk.LEFT,fill=tk.BOTH,expand=True)
+        self.tab_frame.grid(row=0,column=0,pady=0)
         self.file_path=""
         self.file_name="..."
         self.notebook=new_tab_object

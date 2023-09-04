@@ -10,7 +10,7 @@ class RootClass:
     def __init__(self,root):
         self.root=root
         self.notebook=ttk.Notebook(self.root)
-        self.notebook.grid(row=2,column=0,columnspan=3,padx=10,pady=10,sticky='nesw')
+        self.notebook.grid(row=2,column=0,columnspan=5,padx=10,pady=10,sticky='nesw')
 
         #Creating menubar
         self.menubar=tk.Menu(self.root)
@@ -26,7 +26,7 @@ class RootClass:
         self.general_search_label.pack(side=tk.LEFT)
         self.general_search_entry = tk.Entry(self.general_search_frame,width=24)
         self.general_search_entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
-        self.general_search_frame.grid(row=0, column=0, padx=18, pady=(0, 10), columnspan=3, sticky="w")
+        self.general_search_frame.grid(row=0, column=0, padx=18, pady=(0, 10), columnspan=2, sticky="w")
 
         #pid entry
         self.pid_frame = tk.Frame(self.root)
@@ -34,7 +34,7 @@ class RootClass:
         self.pid_label.pack(side=tk.LEFT)
         self.pid_search_entry = tk.Entry(self.pid_frame)
         self.pid_search_entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
-        self.pid_frame.grid(row=1, column=2, padx=20, pady=(0, 10), sticky="w")
+        self.pid_frame.grid(row=1, column=2, padx=20, pady=(5, 15), sticky="w")
 
         #tid entry
         self.tid_frame = tk.Frame(self.root)
@@ -42,18 +42,18 @@ class RootClass:
         self.tid_label.pack(side=tk.LEFT)
         self.tid_search_entry = tk.Entry(self.tid_frame)
         self.tid_search_entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
-        self.tid_frame.grid(row=1, column=3, padx=20, pady=(0, 10), sticky="w")
+        self.tid_frame.grid(row=1, column=3, padx=(25,20), pady=(5, 15), sticky="w")
 
         #flag entry
         self.menu= tk.StringVar()
         self.menu.set("Flag")
         self.drop= tk.OptionMenu(self.root, self.menu,"All", "VERBOSE (V)","DEBUG (D)","INFO (I)","WARN (W)","ERROR (E)","FATAL (F)",command=self.search_using_flag)
-        self.drop.grid(row=0, column=3, padx=20, pady=(0, 10), sticky="w")
+        self.drop.grid(row=0, column=4, padx=50, pady=(20, 10), sticky="w")
         
 
 
         self.timestamp_frame=tk.Frame(self.root)
-        self.timestamp_frame.grid(row=0,column=2,sticky="w",pady=8,padx=7)
+        self.timestamp_frame.grid(row=0,column=3,sticky="w",pady=10,padx=5)
 
         self.timestamp_label=tk.Label(self.timestamp_frame,text="Time Stamp")
         self.timestamp_label.grid(row=0,column=0,sticky="sw",padx=70,columnspan=2)
@@ -63,7 +63,7 @@ class RootClass:
         self.timestamp_from_label=tk.Label(self.timestamp_frame,text="From:")
         self.timestamp_from_label.grid(row=1,column=0)
         self.timestamp_to_label=tk.Label(self.timestamp_frame,text="To:")
-        self.timestamp_to_label.grid(row=2,column=0,sticky="e")
+        self.timestamp_to_label.grid(row=2,column=0,sticky="e",padx=(0,2))
 
         self.timestamp_from_entry=tk.Entry(self.timestamp_frame)
         self.timestamp_from_entry.grid(row=1,column=1)
@@ -72,20 +72,20 @@ class RootClass:
 
         #Search Button frame
         self.search_frame=tk.Frame(self.root)
-        self.search_frame.grid(row=1, column=0, columnspan=20, padx=22, pady=(0, 10), sticky="w")
+        self.search_frame.grid(row=1, column=0, columnspan=2, padx=22, pady=(0, 10), sticky="w")
 
         # search in current file 
         self.search_button = tk.Button(self.search_frame, text="Search in file",command=self.search_string)
-        self.search_button.pack(side=tk.LEFT, fill=tk.X, expand=True)
+        self.search_button.grid(row=0, column=0, sticky="w",padx=(0,20))
         
         # search in all
         self.search_all_button=tk.Button(self.search_frame,text="Search All",command=self.search_all)
-        self.search_all_button.pack(side=tk.LEFT, fill=tk.X, expand=True)
+        self.search_all_button.grid(row=0, column=1, sticky="e",padx=(63,0))
 
         
 
         #To make the window responsive and scale according to size
-        self.root.grid_rowconfigure(4, weight=1)
+        self.root.grid_rowconfigure(2, weight=1)
         self.root.grid_columnconfigure(0, weight=1)
         self.root.grid_columnconfigure(1, weight=1)
         self.root.grid_columnconfigure(2, weight=1)
