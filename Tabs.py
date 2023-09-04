@@ -41,10 +41,10 @@ class Tab:
             self.text_widget.delete("1.0",tk.END)
             self.text_widget.config(state=tk.DISABLED)
     
-    def searchBtnClick(self,general_search_string,pid,tid):
-        self.general_search(general_search_string,pid,tid)
+    def searchBtnClick(self,general_search_string,pid,tid,flagValue):
+        self.general_search(general_search_string,pid,tid,flagValue)
     
-    def general_search(self,searchText,pid,tid):
+    def general_search(self,searchText,pid,tid,flagValue):
         self.text_widget.config(state=tk.NORMAL)
         self.text_widget.delete("1.0",tk.END)
         pid_list=pid.split(",")
@@ -63,10 +63,10 @@ class Tab:
                         # content_time_obj=datetime.strptime(content_time,time_to_check_format).time()
                         content_pid=content_split_first_part[2]
                         content_tid=content_split_first_part[3]
-                        # content_flagValue=content_split_first_part[4]
+                        content_flagValue=content_split_first_part[4]
 
-                        if pid or tid or searchText:
-                            if (not pid or content_pid in pid_list) and (not tid or content_tid in tid_list) and (searchText.casefold() in content.casefold()):
+                        if pid or tid or searchText or flagValue:
+                            if (not pid or content_pid in pid_list) and (not tid or content_tid in tid_list) and (searchText.casefold() in content.casefold()) and (content_flagValue==flagValue or flagValue==""):
                                 self.text_widget.insert(tk.INSERT,content)
                         #No entry in any field, display entire contents
                         else:
@@ -79,7 +79,7 @@ class Tab:
                     else:
                         #If content is not in default LOG line format, control come here
                         #All fields should be empty except general search for this to execute
-                        if not pid and not tid and searchText in content:
+                        if not pid and not tid and flagValue=="" and searchText in content:
                             # if content in list(cfg.breakpointsLineNum.keys()):
                             #     startIndex=cfg.text_widget.index(INSERT)
                             #     endIndex=startIndex.split(".")[0]+".end"
@@ -87,6 +87,7 @@ class Tab:
                             #     cfg.existingBreakPoints.append(content)
                             self.text_widget.insert(tk.INSERT,content)
                     
+
         except(Exception):
             messagebox.showerror("Error", "Some error occured")
         self.text_widget.config(state=tk.DISABLED)

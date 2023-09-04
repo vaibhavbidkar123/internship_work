@@ -40,12 +40,25 @@ class RootClass:
         self.tid_search_entry = tk.Entry(self.tid_frame)
         self.tid_search_entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
         self.tid_frame.grid(row=1, column=3, padx=20, pady=(0, 10), sticky="w")
+
+        #flag entry
+        self.menu= tk.StringVar()
+        self.menu.set("Flag")
+        self.drop= tk.OptionMenu(self.root, self.menu,"All", "VERBOSE (V)","DEBUG (D)","INFO (I)","WARN (W)","ERROR (E)","FATAL (F)",command=self.search_using_flag)
+        self.drop.grid(row=0, column=3, padx=20, pady=(0, 10), sticky="w")
         
 
-        #Search Button
-        self.search_button = tk.Button(self.root, text="Search in file",command=self.search_string)
-        self.search_button.grid(row=1, column=0, columnspan=20, padx=22, pady=(0, 10), sticky="w")
-    
+        #Search Button frame
+        self.search_frame=tk.Frame(self.root)
+        self.search_frame.grid(row=1, column=0, columnspan=20, padx=22, pady=(0, 10), sticky="w")
+
+        # search in current file 
+        self.search_button = tk.Button(self.search_frame, text="Search in file",command=self.search_string)
+        self.search_button.pack(side=tk.LEFT, fill=tk.X, expand=True)
+        
+        # search in all
+        self.search_all_button=tk.Button(self.search_frame,text="Search All",command=self.search_all)
+        self.search_all_button.pack(side=tk.LEFT, fill=tk.X, expand=True)
 
 
 
@@ -74,8 +87,80 @@ class RootClass:
         general_search=self.general_search_entry.get()
         pid=self.pid_search_entry.get()
         tid=self.tid_search_entry.get()
+        flagValue=self.menu.get()
+        match flagValue:
+            case "Flag":
+                flagValue=""
+            case "All":
+                flagValue=""
+            case "VERBOSE (V)":
+                flagValue="V"
+            case "DEBUG (D)":
+                flagValue="D"
+            case "INFO (I)":
+                flagValue="I"
+            case "WARN (W)":
+                flagValue="W"
+            case "ERROR (E)":
+                flagValue="E"
+            case "FATAL (F)":
+                flagValue="F"
         self.active_tab=self.notebook.select()
-        Tabs.Tab.searchBtnClick(self.tabs_object[self.notebook.index(self.active_tab)],general_search,pid,tid)
+        Tabs.Tab.searchBtnClick(self.tabs_object[self.notebook.index(self.active_tab)],general_search,pid,tid,flagValue)
+
+    def search_all(self):
+        general_search=self.general_search_entry.get()
+        pid=self.pid_search_entry.get()
+        tid=self.tid_search_entry.get()
+        flagValue=self.menu.get()
+        match flagValue:
+            case "Flag":
+                flagValue=""
+            case "All":
+                flagValue=""
+            case "VERBOSE (V)":
+                flagValue="V"
+            case "DEBUG (D)":
+                flagValue="D"
+            case "INFO (I)":
+                flagValue="I"
+            case "WARN (W)":
+                flagValue="W"
+            case "ERROR (E)":
+                flagValue="E"
+            case "FATAL (F)":
+                flagValue="F"
+        
+        for object in self.tabs_object :
+            Tabs.Tab.searchBtnClick(object,general_search,pid,tid,flagValue)
+    
+    def search_using_flag(self,flagValue):
+        general_search=self.general_search_entry.get()
+        pid=self.pid_search_entry.get()
+        tid=self.tid_search_entry.get()
+
+        match flagValue:
+            case "Flag":
+                flagValue=""
+            case "All":
+                flagValue=""
+            case "VERBOSE (V)":
+                flagValue="V"
+            case "DEBUG (D)":
+                flagValue="D"
+            case "INFO (I)":
+                flagValue="I"
+            case "WARN (W)":
+                flagValue="W"
+            case "ERROR (E)":
+                flagValue="E"
+            case "FATAL (F)":
+                flagValue="F"
+
+        self.active_tab=self.notebook.select()
+        Tabs.Tab.searchBtnClick(self.tabs_object[self.notebook.index(self.active_tab)],general_search,pid,tid,flagValue)
+
+
 
 def del_tab(obj):
     pass
