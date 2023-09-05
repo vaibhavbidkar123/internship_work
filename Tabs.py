@@ -13,7 +13,8 @@ class Tab:
         self.file_path=""
         self.file_name="..."
         self.notebook=new_tab_object
-
+        self.matchesfound=0
+        self.matchesfound_label=tk.Label(self.tab_frame,text="test")
         new_tab_object.add(self.tab_frame,text=self.file_name)
 
    #Opening a file and displaying all its contents 
@@ -48,6 +49,7 @@ class Tab:
     
                     #--MAIN SEARCH ALGORITHM--#
     def general_search(self,searchText,pid,tid,flagValue,timestampFrom,timestampTo):
+        self.matchesfound=0
         self.text_widget.config(state=tk.NORMAL)
         self.text_widget.delete("1.0",tk.END)
         pid_list=pid.split(",")
@@ -57,47 +59,52 @@ class Tab:
         if(timestampFrom!="" and timestampTo!=""):
             timeRecieved=True
         content=True
-        try:
-            with open(self.file_path,"r", encoding="ANSI", errors="replace") as f:
-                while content:
-                    content=f.readline()
-                    content_split=content.split()
-                    if(len(content_split)>4):
-                        temp = content.split(":")
-                        content_split=[":".join(temp[0:3])] + temp[3:]
-                        content_split_first_part=content_split[0].split()
-                        content_time=content_split_first_part[1]
-                        content_time_obj=datetime.strptime(content_time,time_to_check_format).time()
-                        content_pid=content_split_first_part[2]
-                        content_tid=content_split_first_part[3]
-                        content_flagValue=content_split_first_part[4]
+        if(self.file_path==""):
+            pass
+        else:
+            try:
+                with open(self.file_path,"r", encoding="ANSI", errors="replace") as f:
+                    while content:
+                        content=f.readline()
+                        content_split=content.split()
+                        if(len(content_split)>4):
+                            temp = content.split(":")
+                            content_split=[":".join(temp[0:3])] + temp[3:]
+                            content_split_first_part=content_split[0].split()
+                            content_time=content_split_first_part[1]
+                            content_time_obj=datetime.strptime(content_time,time_to_check_format).time()
+                            content_pid=content_split_first_part[2]
+                            content_tid=content_split_first_part[3]
+                            content_flagValue=content_split_first_part[4]
 
-                        if pid or tid or searchText or flagValue or timeRecieved:
-                            if (not pid or content_pid in pid_list) and (not tid or content_tid in tid_list) and (searchText.casefold() in content.casefold()) and (content_flagValue==flagValue or flagValue=="")  and ((timestampFrom=="" and timestampTo=="") or (timestampFrom <= content_time_obj <= timestampTo) ):
+                            if pid or tid or searchText or flagValue or timeRecieved:
+                                if (not pid or content_pid in pid_list) and (not tid or content_tid in tid_list) and (searchText.casefold() in content.casefold()) and (content_flagValue==flagValue or flagValue=="")  and ((timestampFrom=="" and timestampTo=="") or (timestampFrom <= content_time_obj <= timestampTo) ):
+                                    self.text_widget.insert(tk.INSERT,content)
+                                    self.matchesfound+=1
+                            #No entry in any field, display entire contents
+                            else:
+                                # if content in list(cfg.breakpointsLineNum.keys()):
+                                #     startIndex=cfg.text_widget.index(INSERT)
+                                #     endIndex=startIndex.split(".")[0]+".end"
+                                #     cfg.breakpointsLineNum[content]=[startIndex,endIndex]
+                                #     cfg.existingBreakPoints.append(content)
                                 self.text_widget.insert(tk.INSERT,content)
-                        #No entry in any field, display entire contents
+                                self.matchesfound+=1
                         else:
-                            # if content in list(cfg.breakpointsLineNum.keys()):
-                            #     startIndex=cfg.text_widget.index(INSERT)
-                            #     endIndex=startIndex.split(".")[0]+".end"
-                            #     cfg.breakpointsLineNum[content]=[startIndex,endIndex]
-                            #     cfg.existingBreakPoints.append(content)
-                            self.text_widget.insert(tk.INSERT,content)
-                    else:
-                        #If content is not in default LOG line format, control come here
-                        #All fields should be empty except general search for this to execute
-                        if not pid and not tid and flagValue==""and searchText in content and timeRecieved==False:
-                            # if content in list(cfg.breakpointsLineNum.keys()):
-                            #     startIndex=cfg.text_widget.index(INSERT)
-                            #     endIndex=startIndex.split(".")[0]+".end"
-                            #     cfg.breakpointsLineNum[content]=[startIndex,endIndex]
-                            #     cfg.existingBreakPoints.append(content)
-                            self.text_widget.insert(tk.INSERT,content)
-                    
-
-        except(Exception):
-            messagebox.showerror("Error", "Some error occured")
+                            #If content is not in default LOG line format, control come here
+                            #All fields should be empty except general search for this to execute
+                            if not pid and not tid and flagValue==""and searchText in content and timeRecieved==False:
+                                # if content in list(cfg.breakpointsLineNum.keys()):
+                                #     startIndex=cfg.text_widget.index(INSERT)
+                                #     endIndex=startIndex.split(".")[0]+".end"
+                                #     cfg.breakpointsLineNum[content]=[startIndex,endIndex]
+                                #     cfg.existingBreakPoints.append(content)
+                                self.text_widget.insert(tk.INSERT,content)
+                                self.matchesfound+=1
+            except(Exception):
+                messagebox.showerror("Error", "Some error occured")
         self.text_widget.config(state=tk.DISABLED)
+        print(self.matchesfound)
 
 
     
