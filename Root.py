@@ -134,6 +134,7 @@ class RootClass:
         RootClass.tabs_object.remove(RootClass.tabs_object[self.notebook.index(self.active_tab)])
         self.notebook.forget(self.active_tab)
         if(len(RootClass.tabs_object)==0):
+            #Disable enter binds
             self.general_search_entry.unbind('<Return>')
             self.tid_search_entry.unbind('<Return>')
             self.pid_search_entry.unbind('<Return>')
@@ -145,7 +146,7 @@ class RootClass:
             self.menu.set("Flag")
             self.drop.config(state="disabled")
             self.file_menu.entryconfig("Delete Current Tab",state="disabled")
-            #Disable enter binds
+            
 
             
 

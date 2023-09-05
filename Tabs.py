@@ -7,15 +7,22 @@ from datetime import datetime
 class Tab:
     def __init__(self,new_tab_object):
         self.tab_frame=ttk.Frame(new_tab_object)
-        self.text_widget=tk.Text(self.tab_frame,wrap=tk.WORD)
-        self.text_widget.pack(side=tk.TOP,fill=tk.BOTH,expand=True)
+        self.text_widget_frame=tk.Frame(self.tab_frame)
+        self.text_widget_frame.pack(side=tk.TOP,fill=tk.BOTH,expand=True)
+        self.text_widget=tk.Text(self.text_widget_frame,wrap=tk.WORD)
+        self.text_widget.pack(side=tk.LEFT,fill=tk.BOTH,expand=True)
         self.tab_frame.grid(row=0,column=0,pady=0)
+        
         self.file_path=""
         self.file_name="..."
         self.notebook=new_tab_object
         self.matchesfound=0
         self.matchesfound_label=tk.Label(self.tab_frame,text="")
         self.matchesfound_label.pack(side=tk.LEFT,)
+        self.scrollbar=tk.Scrollbar(self.text_widget_frame,orient='vertical')
+        self.scrollbar.pack(expand=True, fill=tk.BOTH)
+        self.scrollbar.config(command=self.text_widget.yview)
+        self.text_widget.config(yscroll=self.scrollbar.set)
         new_tab_object.add(self.tab_frame,text=self.file_name)
 
    #Opening a file and displaying all its contents 
@@ -44,6 +51,7 @@ class Tab:
             self.text_widget.config(state=tk.NORMAL)
             self.text_widget.delete("1.0",tk.END)
             self.text_widget.config(state=tk.DISABLED)
+        self.scrollbar.config(command=self.text_widget.yview)
     
     def searchBtnClick(self,general_search_string,pid,tid,flagValue,timestamp_from_obj,timestamp_to_obj):
         self.general_search(general_search_string,pid,tid,flagValue,timestamp_from_obj,timestamp_to_obj)
@@ -104,9 +112,9 @@ class Tab:
                                 self.matchesfound+=1
             except(Exception):
                 messagebox.showerror("Error", "Some error occured")
-        self.text_widget.config(state=tk.DISABLED)
-        self.matchesfound_label.config(text="Matches Found: "+str(self.matchesfound))
-        print(self.matchesfound)
+        self.scrollbar.config(command=self.text_widget.yview)
+        self.text_widget.config(state=tk.DISABLED,yscroll=self.scrollbar.set)
+        self.matchesfound_label.config(text="Entries found: "+str(self.matchesfound))
 
 
     
