@@ -55,6 +55,27 @@ class Tab:
     
     def searchBtnClick(self,general_search_string,pid,tid,flagValue,timestamp_from_obj,timestamp_to_obj):
         self.general_search(general_search_string,pid,tid,flagValue,timestamp_from_obj,timestamp_to_obj)
+
+    def sanitizeSearchText(self,searchText):
+    #Convert searchtext to list based on '|' split
+    #Convert each string to lowercase characters for case insensitive search
+        searchText_list=searchText.split("|")
+        new_searchText_list=[]
+        for element in searchText_list:
+            new_element=element.strip()
+            new_element=new_element.lower()
+            new_searchText_list.append(new_element)
+        return new_searchText_list
+
+    def checkSearchText(self,content,searchText_list):
+        #Return true if content exists in searchText_list
+        #Else return false if there is no match
+        flag=0
+        for element in searchText_list:
+            if element in content.casefold():
+                flag=1
+        return flag
+
     
                     #--MAIN SEARCH ALGORITHM--#
     def general_search(self,searchText,pid,tid,flagValue,timestampFrom,timestampTo):
@@ -67,6 +88,7 @@ class Tab:
         time_to_check_format='%H:%M:%S.%f'
         if(timestampFrom!="" and timestampTo!=""):
             timeRecieved=True
+        searchText_list=self.sanitizeSearchText(searchText)
         content=True
         if(self.file_path==""):
             pass
@@ -87,7 +109,7 @@ class Tab:
                             content_flagValue=content_split_first_part[4]
 
                             if pid or tid or searchText or flagValue or timeRecieved:
-                                if (not pid or content_pid in pid_list) and (not tid or content_tid in tid_list) and (searchText.casefold() in content.casefold()) and (content_flagValue==flagValue or flagValue=="")  and ((timestampFrom=="" and timestampTo=="") or (timestampFrom <= content_time_obj <= timestampTo) ):
+                                if (not pid or content_pid in pid_list) and (not tid or content_tid in tid_list) and (self.checkSearchText(content,searchText_list)) and (content_flagValue==flagValue or flagValue=="")  and ((timestampFrom=="" and timestampTo=="") or (timestampFrom <= content_time_obj <= timestampTo) ):
                                     self.text_widget.insert(tk.INSERT,content)
                                     self.matchesfound+=1
                             #No entry in any field, display entire contents
@@ -102,7 +124,7 @@ class Tab:
                         else:
                             #If content is not in default LOG line format, control come here
                             #All fields should be empty except general search for this to execute
-                            if not pid and not tid and flagValue==""and searchText in content and timeRecieved==False:
+                            if not pid and not tid and flagValue=="" and timeRecieved==False and self.checkSearchText(content,searchText_list):
                                 # if content in list(cfg.breakpointsLineNum.keys()):
                                 #     startIndex=cfg.text_widget.index(INSERT)
                                 #     endIndex=startIndex.split(".")[0]+".end"
@@ -115,12 +137,3 @@ class Tab:
         self.scrollbar.config(command=self.text_widget.yview)
         self.text_widget.config(state=tk.DISABLED,yscroll=self.scrollbar.set)
         self.matchesfound_label.config(text="Entries found: "+str(self.matchesfound))
-
-
-    
-
-            
-    
-
-
-

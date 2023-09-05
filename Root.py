@@ -52,8 +52,18 @@ class RootClass:
         self.menu= tk.StringVar()
         self.menu.set("Flag")
         self.drop= tk.OptionMenu(self.root, self.menu,"All", "VERBOSE (V)","DEBUG (D)","INFO (I)","WARN (W)","ERROR (E)","FATAL (F)",command=self.search_using_flag)
-        self.drop.grid(row=0, column=4, padx=50, pady=(20, 10), sticky="w")
+        self.drop.grid(row=0, column=4, pady=(20, 10), sticky="w")
         
+
+        #clear button
+        self.clear_button_frame=tk.Frame(self.root)
+        self.clear_button_frame.grid(row=1,column=4,sticky="w")
+
+        self.clear_button=tk.Button(self.clear_button_frame,text="Clear All",command=self.clear_all)
+        self.clear_button.grid(row=0,column=0,sticky="w")
+
+        self.reset_button=tk.Button(self.clear_button_frame,text="Reset ",)
+        self.reset_button.grid(row=0,column=1,padx=30,sticky="w")
 
         #Timestamp Entry
         self.timestamp_frame=tk.Frame(self.root)
@@ -95,6 +105,8 @@ class RootClass:
             self.search_button.config(state="disabled")
             self.search_all_button.config(state="disabled")
             self.drop.config(state="disabled")
+            self.clear_button.config(state="disabled")
+            self.reset_button.config(state="disabled")
             self.file_menu.entryconfig("Delete Current Tab",state="disabled")
 
         #Set return binds empty
@@ -120,6 +132,8 @@ class RootClass:
             self.search_button.config(state="active")
             self.search_all_button.config(state="active")
             self.drop.config(state="active")
+            self.clear_button.config(state="active")
+            self.reset_button.config(state="active")
             self.file_menu.entryconfig("Delete Current Tab",state="active")
             #Enable enter binds
             self.general_search_entry.bind('<Return>', self.search_string)
@@ -145,9 +159,19 @@ class RootClass:
             self.search_all_button.config(state="disabled")
             self.menu.set("Flag")
             self.drop.config(state="disabled")
+            self.clear_button.config(state="disabled")
+            self.reset_button.config(state="disabled")
             self.file_menu.entryconfig("Delete Current Tab",state="disabled")
             
-
+    def clear_all(self):
+        #Clears all entries from all fields
+        self.general_search_entry.delete(0,'end')
+        self.pid_search_entry.delete(0,'end')
+        self.tid_search_entry.delete(0,'end')
+        self.timestamp_from_entry.delete(0,'end')
+        self.timestamp_to_entry.delete(0,'end')
+        self.menu.set("Flag")
+        self.search_string(1)
             
 
     #Searching a string on search in file button click
@@ -354,6 +378,8 @@ class RootClass:
         timestampTo_second=timestampTo_obj.second
         timestampTo_obj=time(timestampTo_hour,timestampTo_minute,timestampTo_second,999999)
         return timestampTo_obj
+    
+
 
 
 
