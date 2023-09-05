@@ -18,6 +18,7 @@ class RootClass:
         self.file_menu=tk.Menu(self.menubar,tearoff=0)
         self.file_menu.add_command(label='Open File',command=self.add_tab)
         self.file_menu.add_command(label='Delete Current Tab',command=self.delete_tab)
+        self.file_menu.add_command(label='Exit',command=self.root.destroy)
         self.menubar.add_cascade(label="File",menu=self.file_menu)
 
         #General Search Entry
