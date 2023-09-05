@@ -15,7 +15,8 @@ class Tab:
         self.notebook=new_tab_object
 
         new_tab_object.add(self.tab_frame,text=self.file_name)
-    
+
+   #Opening a file and displaying all its contents 
     def open_file(self):
         self.file_path=filedialog.askopenfilename(filetypes=[("Log Files","*.log")])
         self.file_path_name=self.file_path
@@ -45,6 +46,7 @@ class Tab:
     def searchBtnClick(self,general_search_string,pid,tid,flagValue,timestamp_from_obj,timestamp_to_obj):
         self.general_search(general_search_string,pid,tid,flagValue,timestamp_from_obj,timestamp_to_obj)
     
+                    #--MAIN SEARCH ALGORITHM--#
     def general_search(self,searchText,pid,tid,flagValue,timestampFrom,timestampTo):
         self.text_widget.config(state=tk.NORMAL)
         self.text_widget.delete("1.0",tk.END)

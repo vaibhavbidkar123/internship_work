@@ -29,7 +29,7 @@ class RootClass:
         self.general_search_entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
         self.general_search_frame.grid(row=0, column=0, padx=18, pady=(0, 10), columnspan=2, sticky="w")
 
-        #pid entry
+        #PID entry
         self.pid_frame = tk.Frame(self.root)
         self.pid_label = tk.Label(self.pid_frame, text="PID:")
         self.pid_label.pack(side=tk.LEFT)
@@ -37,7 +37,7 @@ class RootClass:
         self.pid_search_entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
         self.pid_frame.grid(row=1, column=2, padx=20, pady=(5, 15), sticky="w")
 
-        #tid entry
+        #TID entry
         self.tid_frame = tk.Frame(self.root)
         self.tid_label = tk.Label(self.tid_frame, text="TID:")
         self.tid_label.pack(side=tk.LEFT)
@@ -45,21 +45,18 @@ class RootClass:
         self.tid_search_entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
         self.tid_frame.grid(row=1, column=3, padx=(25,20), pady=(5, 15), sticky="w")
 
-        #flag entry
+        #Flag entry
         self.menu= tk.StringVar()
         self.menu.set("Flag")
         self.drop= tk.OptionMenu(self.root, self.menu,"All", "VERBOSE (V)","DEBUG (D)","INFO (I)","WARN (W)","ERROR (E)","FATAL (F)",command=self.search_using_flag)
         self.drop.grid(row=0, column=4, padx=50, pady=(20, 10), sticky="w")
         
 
-
+        #Timestamp Entry
         self.timestamp_frame=tk.Frame(self.root)
         self.timestamp_frame.grid(row=0,column=3,sticky="w",pady=10,padx=5)
-
         self.timestamp_label=tk.Label(self.timestamp_frame,text="Time Stamp")
         self.timestamp_label.grid(row=0,column=0,sticky="sw",padx=70,columnspan=2)
-
-
 
         self.timestamp_from_label=tk.Label(self.timestamp_frame,text="From:")
         self.timestamp_from_label.grid(row=1,column=0)
@@ -75,15 +72,13 @@ class RootClass:
         self.search_frame=tk.Frame(self.root)
         self.search_frame.grid(row=1, column=0, columnspan=2, padx=22, pady=(0, 10), sticky="w")
 
-        # search in current file 
+        #Search in current file button
         self.search_button = tk.Button(self.search_frame, text="Search in file",command=self.search_string)
         self.search_button.grid(row=0, column=0, sticky="w",padx=(0,20))
         
-        # search in all
+        #Search in all file button
         self.search_all_button=tk.Button(self.search_frame,text="Search All",command=self.search_all)
         self.search_all_button.grid(row=0, column=1, sticky="e",padx=(63,0))
-
-        
 
         #To make the window responsive and scale according to size
         self.root.grid_rowconfigure(2, weight=1)
@@ -95,17 +90,19 @@ class RootClass:
         self.tabs_object=[]
         self.active_tab=None
 
-
+    #Adding a new tab
     def add_tab(self):
         new_tab=Tabs.Tab(self.notebook)
         self.tabs_object.append(new_tab)
         new_tab.open_file()
 
+    #Deleting a tab
     def delete_tab(self):
         self.active_tab=self.notebook.select()
         self.tabs_object.remove(self.tabs_object[self.notebook.index(self.active_tab)])
         self.notebook.forget(self.active_tab)
 
+    #Searching a string on search in file button click
     def search_string(self):
         #Get all values
         general_search=self.general_search_entry.get()
@@ -169,6 +166,7 @@ class RootClass:
         if(is_timestamp_ok):
             Tabs.Tab.searchBtnClick(self.tabs_object[self.notebook.index(self.active_tab)],general_search,pid,tid,flagValue,timestamp_from_obj,timestamp_to_obj)
 
+    #Searching in all files
     def search_all(self):
         general_search=self.general_search_entry.get()
         pid=self.pid_search_entry.get()
@@ -195,7 +193,7 @@ class RootClass:
             case "FATAL (F)":
                 flagValue="F"
         
-                #Filtering Timestamp
+        #Filtering Timestamp
         #either one is empty ERROR condition
         if((timestamp_from!="" and timestamp_to=="") or (timestamp_from=="" and timestamp_to!="")):
             timestamp_from_obj=""
@@ -229,6 +227,7 @@ class RootClass:
             if(is_timestamp_ok):
                 Tabs.Tab.searchBtnClick(object,general_search,pid,tid,flagValue,timestamp_from_obj,timestamp_to_obj)
     
+    #Searching when flag value is updated
     def search_using_flag(self,flagValue):
         general_search=self.general_search_entry.get()
         pid=self.pid_search_entry.get()
@@ -237,6 +236,7 @@ class RootClass:
         timestamp_from=self.timestamp_from_entry.get()
         timestamp_to=self.timestamp_to_entry.get()
 
+        #Switch-case for assigning flag value according to selected value
         match flagValue:
             case "Flag":
                 flagValue=""
@@ -255,7 +255,7 @@ class RootClass:
             case "FATAL (F)":
                 flagValue="F"
         
-                #Filtering Timestamp
+        #Filtering Timestamp
         #either one is empty ERROR condition
         if((timestamp_from!="" and timestamp_to=="") or (timestamp_from=="" and timestamp_to!="")):
             timestamp_from_obj=""
@@ -289,8 +289,8 @@ class RootClass:
         if(is_timestamp_ok):
             Tabs.Tab.searchBtnClick(self.tabs_object[self.notebook.index(self.active_tab)],general_search,pid,tid,flagValue,timestamp_from_obj,timestamp_to_obj)
 
-    def getTimeFormat(self,timeobject):
     #To find the time format of timestampTo and timestampFrom
+    def getTimeFormat(self,timeobject):
         partsFrom=timeobject.split(".")
         if(len(partsFrom)==1):
             time_format = '%H:%M:%S'
@@ -298,8 +298,9 @@ class RootClass:
             time_format = '%H:%M:%S.%f'
         return time_format
     
+
+    #To add .999 to timestampTo field if HH:MM:SS format format
     def addMilliseconds(self,timestampTo_obj):
-        #To add .999 to timestampTo field if HH:MM:SS format
         timestampTo_hour=timestampTo_obj.hour
         timestampTo_minute=timestampTo_obj.minute
         timestampTo_second=timestampTo_obj.second
