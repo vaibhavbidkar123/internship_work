@@ -76,7 +76,7 @@ class RootClass:
         self.search_frame.grid(row=1, column=0, columnspan=2, padx=22, pady=(0, 10), sticky="w")
 
         #Search in current file button
-        self.search_button = tk.Button(self.search_frame, text="Search in file",command=self.search_string)
+        self.search_button = tk.Button(self.search_frame, text="Search in file",command=lambda: self.search_string(1))
         self.search_button.grid(row=0, column=0, sticky="w",padx=(0,20))
         
         #Search in all file button
@@ -91,13 +91,24 @@ class RootClass:
         self.root.grid_columnconfigure(3, weight=1)
 
         if(len(RootClass.tabs_object)==0):
+            #Disable all buttons
             self.search_button.config(state="disabled")
             self.search_all_button.config(state="disabled")
             self.drop.config(state="disabled")
             self.file_menu.entryconfig("Delete Current Tab",state="disabled")
 
+        #Set return binds empty
+        if(len(RootClass.tabs_object)==0):
+            self.general_search_entry.bind('<Return>')
+            self.tid_search_entry.bind('<Return>')
+            self.pid_search_entry.bind('<Return>')
+            self.timestamp_from_entry.bind('<Return>')
+            self.timestamp_to_entry.bind('<Return>')
 
         self.active_tab=None
+
+    def go_to_next_element(self,event):
+        event.widget.tk_focusNext().focus()
 
     #Adding a new tab
     def add_tab(self):
@@ -105,10 +116,17 @@ class RootClass:
         RootClass.tabs_object.append(new_tab)
         new_tab.open_file()
         if(len(RootClass.tabs_object)>0):
+            #Enable all buttons
             self.search_button.config(state="active")
             self.search_all_button.config(state="active")
             self.drop.config(state="active")
             self.file_menu.entryconfig("Delete Current Tab",state="active")
+            #Enable enter binds
+            self.general_search_entry.bind('<Return>', self.search_string)
+            self.tid_search_entry.bind('<Return>', self.search_string)
+            self.pid_search_entry.bind('<Return>', self.search_string)
+            self.timestamp_from_entry.bind('<Return>', self.go_to_next_element)
+            self.timestamp_to_entry.bind('<Return>', self.search_string)
 
     #Deleting a tab
     def delete_tab(self): 
@@ -116,14 +134,23 @@ class RootClass:
         RootClass.tabs_object.remove(RootClass.tabs_object[self.notebook.index(self.active_tab)])
         self.notebook.forget(self.active_tab)
         if(len(RootClass.tabs_object)==0):
+            self.general_search_entry.unbind('<Return>')
+            self.tid_search_entry.unbind('<Return>')
+            self.pid_search_entry.unbind('<Return>')
+            self.timestamp_from_entry.unbind('<Return>')
+            self.timestamp_to_entry.unbind('<Return>')
+            #Disable all buttons
             self.search_button.config(state="disabled")
             self.search_all_button.config(state="disabled")
+            self.menu.set("Flag")
             self.drop.config(state="disabled")
             self.file_menu.entryconfig("Delete Current Tab",state="disabled")
+            #Disable enter binds
+
             
 
     #Searching a string on search in file button click
-    def search_string(self):
+    def search_string(self,event):
         #Get all values
         general_search=self.general_search_entry.get()
         pid=self.pid_search_entry.get()
