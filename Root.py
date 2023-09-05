@@ -7,6 +7,8 @@ import Tabs
 
 class RootClass:
 
+    tabs_object=[]
+
     def __init__(self,root):
         self.root=root
         self.notebook=ttk.Notebook(self.root)
@@ -87,20 +89,37 @@ class RootClass:
         self.root.grid_columnconfigure(2, weight=1)
         self.root.grid_columnconfigure(3, weight=1)
 
-        self.tabs_object=[]
+        if(len(RootClass.tabs_object)==0):
+            self.search_button.config(state="disabled")
+            self.search_all_button.config(state="disabled")
+            self.drop.config(state="disabled")
+            self.file_menu.entryconfig("Delete Current Tab",state="disabled")
+
+
         self.active_tab=None
 
     #Adding a new tab
     def add_tab(self):
         new_tab=Tabs.Tab(self.notebook)
-        self.tabs_object.append(new_tab)
+        RootClass.tabs_object.append(new_tab)
         new_tab.open_file()
+        if(len(RootClass.tabs_object)>0):
+            self.search_button.config(state="active")
+            self.search_all_button.config(state="active")
+            self.drop.config(state="active")
+            self.file_menu.entryconfig("Delete Current Tab",state="active")
 
     #Deleting a tab
-    def delete_tab(self):
+    def delete_tab(self): 
         self.active_tab=self.notebook.select()
-        self.tabs_object.remove(self.tabs_object[self.notebook.index(self.active_tab)])
+        RootClass.tabs_object.remove(RootClass.tabs_object[self.notebook.index(self.active_tab)])
         self.notebook.forget(self.active_tab)
+        if(len(RootClass.tabs_object)==0):
+            self.search_button.config(state="disabled")
+            self.search_all_button.config(state="disabled")
+            self.drop.config(state="disabled")
+            self.file_menu.entryconfig("Delete Current Tab",state="disabled")
+            
 
     #Searching a string on search in file button click
     def search_string(self):
@@ -164,7 +183,7 @@ class RootClass:
 
         self.active_tab=self.notebook.select()
         if(is_timestamp_ok):
-            Tabs.Tab.searchBtnClick(self.tabs_object[self.notebook.index(self.active_tab)],general_search,pid,tid,flagValue,timestamp_from_obj,timestamp_to_obj)
+            Tabs.Tab.searchBtnClick(RootClass.tabs_object[self.notebook.index(self.active_tab)],general_search,pid,tid,flagValue,timestamp_from_obj,timestamp_to_obj)
 
     #Searching in all files
     def search_all(self):
@@ -223,7 +242,7 @@ class RootClass:
                 messagebox.showerror("Error", "Please enter a valid time format.")
                 is_timestamp_ok=False
         
-        for object in self.tabs_object:
+        for object in RootClass.tabs_object:
             if(is_timestamp_ok):
                 Tabs.Tab.searchBtnClick(object,general_search,pid,tid,flagValue,timestamp_from_obj,timestamp_to_obj)
     
@@ -287,7 +306,7 @@ class RootClass:
 
         self.active_tab=self.notebook.select()
         if(is_timestamp_ok):
-            Tabs.Tab.searchBtnClick(self.tabs_object[self.notebook.index(self.active_tab)],general_search,pid,tid,flagValue,timestamp_from_obj,timestamp_to_obj)
+            Tabs.Tab.searchBtnClick(RootClass.tabs_object[self.notebook.index(self.active_tab)],general_search,pid,tid,flagValue,timestamp_from_obj,timestamp_to_obj)
 
     #To find the time format of timestampTo and timestampFrom
     def getTimeFormat(self,timeobject):
