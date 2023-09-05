@@ -8,13 +8,14 @@ class Tab:
     def __init__(self,new_tab_object):
         self.tab_frame=ttk.Frame(new_tab_object)
         self.text_widget=tk.Text(self.tab_frame,wrap=tk.WORD)
-        self.text_widget.pack(side=tk.LEFT,fill=tk.BOTH,expand=True)
+        self.text_widget.pack(side=tk.TOP,fill=tk.BOTH,expand=True)
         self.tab_frame.grid(row=0,column=0,pady=0)
         self.file_path=""
         self.file_name="..."
         self.notebook=new_tab_object
         self.matchesfound=0
-        self.matchesfound_label=tk.Label(self.tab_frame,text="test")
+        self.matchesfound_label=tk.Label(self.tab_frame,text="")
+        self.matchesfound_label.pack(side=tk.LEFT,)
         new_tab_object.add(self.tab_frame,text=self.file_name)
 
    #Opening a file and displaying all its contents 
@@ -104,6 +105,7 @@ class Tab:
             except(Exception):
                 messagebox.showerror("Error", "Some error occured")
         self.text_widget.config(state=tk.DISABLED)
+        self.matchesfound_label.config(text="Matches Found: "+str(self.matchesfound))
         print(self.matchesfound)
 
 
