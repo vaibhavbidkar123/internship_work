@@ -7,15 +7,22 @@ import re
 import Root
 
 class Tab:
-    logFormat= r'^(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]).*\n$'
+
+    logFormat= r'^(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]).*\n$' #regular expression for breakpoint
+
     def __init__(self,new_tab_object):
+
+        # tab frame created for the notebook
         self.tab_frame=ttk.Frame(new_tab_object)
+
+        #new text widget will be initialised whenever a new file is opened
         self.text_widget_frame=tk.Frame(self.tab_frame)
         self.text_widget_frame.pack(side=tk.TOP,fill=tk.BOTH,expand=True)
         self.text_widget=tk.Text(self.text_widget_frame,wrap=tk.WORD)
         self.text_widget.pack(side=tk.LEFT,fill=tk.BOTH,expand=True)
         self.tab_frame.grid(row=0,column=0,pady=0)
-
+        
+        # breakpoints for a particular tab is stored here 
         self.breakpointCursor=0
         self.breakpoints=[]
         self.breakpointsLineNum={}
@@ -23,42 +30,49 @@ class Tab:
         self.text_widget.tag_config("breakpointadd", foreground="red")
         self.text_widget.tag_config("breakpointremove", foreground="black")
         
+        # for file name purpose 
         self.file_path=""
         self.file_name="..."
         self.notebook=new_tab_object
+
+        # number of entries found per tab for particular search 
         self.matchesfound=0
         self.matchesfound_label=tk.Label(self.tab_frame,text="")
         self.matchesfound_label.pack(side=tk.LEFT,)
+        
+        # scrollbar 
         self.scrollbar=tk.Scrollbar(self.text_widget_frame,orient='vertical')
         self.scrollbar.pack(expand=True, fill=tk.BOTH)
         self.scrollbar.config(command=self.text_widget.yview)
         self.text_widget.config(yscroll=self.scrollbar.set)
+
+        #file name to be viewed on tab 
         new_tab_object.add(self.tab_frame,text=self.file_name)
 
 
    #Opening a file and displaying all its contents 
     def open_file(self):
-        self.file_path=filedialog.askopenfilename(filetypes=[("Log Files","*.log")])
+        self.file_path=filedialog.askopenfilename(filetypes=[("Log Files","*.log")]) #opens only log files 
         self.file_path_name=self.file_path
         self.file_path_name=self.file_path_name.split("/")
-        self.file_name=self.file_path_name[-1]
+        self.file_name=self.file_path_name[-1]  #file name
         content=True
         if self.file_path:
             #Changing tab name
-            self.notebook.add(self.tab_frame,text=self.file_name)
+            self.notebook.add(self.tab_frame,text=self.file_name) #tab name updated to file name
             self.text_widget.config(state=tk.NORMAL)
-            self.text_widget.delete("1.0",tk.END)
+            self.text_widget.delete("1.0",tk.END) #delete previous content
             try:
                 with open(self.file_path,'r',encoding="ANSI",errors="replace") as file:
                     while content:
                         content=file.readline()
-                        self.text_widget.insert(tk.INSERT,content)
+                        self.text_widget.insert(tk.INSERT,content) #insert entries line by line 
                 self.text_widget.config(state=tk.DISABLED)
             except(Exception):
                 self.text_widget.delete("1.0",tk.END)
         else:
             #DELETE TAB HAS TO BE CALLED HERE
-            self.notebook.add(self.tab_frame,text="Empty File")
+            self.notebook.add(self.tab_frame,text="Empty File")  # if no file is selected
             self.text_widget.config(state=tk.NORMAL)
             self.text_widget.delete("1.0",tk.END)
             self.text_widget.config(state=tk.DISABLED)

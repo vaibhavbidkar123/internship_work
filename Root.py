@@ -6,13 +6,16 @@ from datetime import time
 import Tabs
 
 class RootClass:
-
+    
+    # stores the adresses of all Tab objects , declared as static 
     tabs_object=[]
     RootObject=None
 
     def __init__(self,root):
         self.root=root
         RootClass.RootObject=self
+
+        #note initialised 
         self.notebook=ttk.Notebook(self.root)
         self.notebook.grid(row=2,column=0,columnspan=5,padx=10,pady=10,sticky='nesw')
 
@@ -64,10 +67,10 @@ class RootClass:
         #clear button
         self.clear_button_frame=tk.Frame(self.root)
         self.clear_button_frame.grid(row=1,column=4,sticky="w")
-
         self.clear_button=tk.Button(self.clear_button_frame,text="Clear All",command=self.clear_all)
         self.clear_button.grid(row=0,column=0,sticky="w")
-
+        
+        #reset button
         self.reset_button=tk.Button(self.clear_button_frame,text="Reset ",command=self.call_reset)
         self.reset_button.grid(row=0,column=1,padx=30,sticky="w")
 
@@ -412,11 +415,8 @@ class RootClass:
         return timestampTo_obj
     
 
-
-
-
-def del_tab(obj):
-    pass
+    def del_tab(obj):
+        pass
 
 
 
