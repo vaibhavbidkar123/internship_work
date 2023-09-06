@@ -172,17 +172,20 @@ class Tab:
     
                     #--MAIN SEARCH ALGORITHM--#
     def general_search(self,searchText,pid,tid,flagValue,timestampFrom,timestampTo):
-        self.breakpointCursor=0
-        self.existingBreakPoints=[]
-        self.matchesfound=0
+        self.breakpointCursor=0 #breakpoint cursor set to zero
+        self.existingBreakPoints=[] #breakpoint list is empty initially
+        self.matchesfound=0  
         self.text_widget.config(state=tk.NORMAL)
         self.text_widget.delete("1.0",tk.END)
-        pid_list=pid.split(",")
-        tid_list=tid.split(",")
-        timeRecieved=False
-        time_to_check_format='%H:%M:%S.%f'
+        pid_list=pid.split(",") #pid list splited and stored 
+        tid_list=tid.split(",") #tid list splited and stored 
+        timeRecieved=False #time is not recieved 
+        time_to_check_format='%H:%M:%S.%f'  #time format to check 
+
+        #if empty time recieved then set the timerecieved to true
         if(timestampFrom!="" and timestampTo!=""):
             timeRecieved=True
+        #sanitize general search for piping (or condition)    
         searchText_list=self.sanitizeSearchText(searchText)
         content=True
         if(self.file_path==""):
@@ -194,15 +197,17 @@ class Tab:
                         content=f.readline()
                         content_split=content.split()
                         if(len(content_split)>4):
-                            temp = content.split(":")
-                            content_split=[":".join(temp[0:3])] + temp[3:]
-                            content_split_first_part=content_split[0].split()
-                            content_time=content_split_first_part[1]
-                            content_time_obj=datetime.strptime(content_time,time_to_check_format).time()
-                            content_pid=content_split_first_part[2]
-                            content_tid=content_split_first_part[3]
-                            content_flagValue=content_split_first_part[4]
+                            temp = content.split(":") #split each entry
+                            content_split=[":".join(temp[0:3])] + temp[3:] # join first 3 elements of the list 
+                            content_split_first_part=content_split[0].split() #first part splitted 
+                            content_time=content_split_first_part[1] #time
+                            content_time_obj=datetime.strptime(content_time,time_to_check_format).time() #to validate the time 
+                            content_pid=content_split_first_part[2] #pid
+                            content_tid=content_split_first_part[3] #tid
+                            content_flagValue=content_split_first_part[4] #flag
+                            
 
+                            #main search filter condition 
                             if pid or tid or searchText or flagValue or timeRecieved:
                                 if (not pid or content_pid in pid_list) and (not tid or content_tid in tid_list) and (self.checkSearchText(content,searchText_list)) and (content_flagValue==flagValue or flagValue=="")  and ((timestampFrom=="" and timestampTo=="") or (timestampFrom <= content_time_obj <= timestampTo) ):
                                     if content in list(self.breakpointsLineNum.keys()):
@@ -212,7 +217,7 @@ class Tab:
                                         self.existingBreakPoints.append(content)
                                     
                                     self.text_widget.insert(tk.INSERT,content)
-                                    self.matchesfound+=1
+                                    self.matchesfound+=1 #increment matches found
                             #No entry in any field, display entire contents
                             else:
                                 if content in list(self.breakpointsLineNum.keys()):
@@ -235,9 +240,9 @@ class Tab:
                                 self.matchesfound+=1
             except(Exception):
                 messagebox.showerror("Error", "Some error occured")
-        self.scrollbar.config(command=self.text_widget.yview)
+        self.scrollbar.config(command=self.text_widget.yview) #adjust scroll bar as per the content size 
         self.text_widget.config(state=tk.DISABLED,yscroll=self.scrollbar.set)
-        self.matchesfound_label.config(text="Entries found: "+str(self.matchesfound))
+        self.matchesfound_label.config(text="Entries found: "+str(self.matchesfound)) # print matches found 
         #To add colour to the line
         for element in self.existingBreakPoints:
             startIndex=self.breakpointsLineNum[element][0]
