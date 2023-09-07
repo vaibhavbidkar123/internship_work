@@ -25,7 +25,7 @@ class RootClass:
         self.file_menu=tk.Menu(self.menubar,tearoff=0)
         self.file_menu.add_command(label='Open File',command=lambda: self.add_tab(1),accelerator="Shift+O")
         self.file_menu.add_command(label='Delete Current Tab',command=lambda: self.delete_tab(1),accelerator="Shift+W")
-        # self.file_menu.add_command(label='Delete All Tabs',command=lambda: self.delete_all_tabs(1),accelerator="Ctrl+Shift+W")
+        self.file_menu.add_command(label='Delete All Tabs',command=lambda: self.delete_all_tabs(1),accelerator="Ctrl+Shift+W")
         self.file_menu.add_separator()
         self.file_menu.add_command(label='Exit',command=self.root.destroy)
         self.menubar.add_cascade(label="File",menu=self.file_menu)
@@ -139,7 +139,9 @@ class RootClass:
         self.reset_button.config(state="disabled")
         self.breakpoint_button.config(state="disabled")
         self.file_menu.entryconfig("Delete Current Tab",state="disabled")
+        self.file_menu.entryconfig("Delete All Tabs",state="disabled")
         self.root.unbind("<Shift-W>")
+        self.root.unbind("<Control-Shift-KeyPress-W>")
 
     #To re enable binds
     def enable_binds(self):
@@ -151,6 +153,7 @@ class RootClass:
         self.reset_button.config(state="active")
         self.breakpoint_button.config(state="active")
         self.file_menu.entryconfig("Delete Current Tab",state="active")
+        self.file_menu.entryconfig("Delete All Tabs",state="active")
         #Enable enter binds
         self.general_search_entry.bind('<Return>', self.search_string)
         self.tid_search_entry.bind('<Return>', self.search_string)
@@ -160,6 +163,7 @@ class RootClass:
         self.root.bind("<F2>",self.call_F2Bind)
         self.root.bind("<F1>",self.call_add_del_breakpoint)
         self.root.bind("<Shift-W>",self.delete_tab)
+        self.root.bind("<Control-Shift-KeyPress-W>",self.delete_all_tabs)
 
     #Adding a new tab
     def add_tab(self,event):
@@ -177,12 +181,14 @@ class RootClass:
         if(len(RootClass.tabs_object)==0):
             self.disable_binds()
     
-    # def delete_all_tabs(self,event):
-    #     for object in RootClass.tabs_object:
-    #         RootClass.tabs_object.remove(object)
-    #         self.notebook.forget(RootClass.tabs_object[self.notebook.index(object)])
-    #     if(len(RootClass.tabs_object)==0):
-    #         self.disable_binds()
+    def delete_all_tabs(self,event):
+        while(len(RootClass.tabs_object)>0):
+            self.active_tab=self.notebook.select()
+            RootClass.tabs_object.remove(RootClass.tabs_object[self.notebook.index(self.active_tab)])
+            self.notebook.forget(self.active_tab)
+        
+        if(len(RootClass.tabs_object)==0):
+            self.disable_binds()
 
 
 
