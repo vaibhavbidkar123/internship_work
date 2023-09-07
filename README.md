@@ -7,17 +7,17 @@ This Python GUI program is designed to help you manage and analyze multiple  log
 ## Features
 - Add new log entries with timestamps.
 - View the entire log or specific sections of it.
-- search filters -> general search , pid ,tid ,timestamp ,flag 
-- multitab (add / delete new tabs )
-- filter with multiple tid , pid , searchtext
-- clean UI/UX
-- search in all tabs
-- breakpoint feature
-- all necessary key binders added
-- clear all (clears all the text fields and searches with empty entries )
-- reset button (clears all fields as well as breakpoints )
-- matches found per search is displayed
-- All possible errors handeled 
+- Search filters -> general search , pid ,tid ,timestamp ,flag 
+- Multitab (add / delete new tabs )
+- Filter with multiple tid , pid , searchtext
+- Clean UI/UX
+- Search in all tabs
+- Breakpoint feature
+- All necessary key binders added
+- Clear all (clears all the text fields and searches with empty entries )
+- Reset button (clears all fields as well as breakpoints )
+- Matches found per search is displayed
+- All possible errors handled 
 
 ## Technology used 
 - python (tkinter)
