@@ -23,8 +23,9 @@ class RootClass:
         self.menubar=tk.Menu(self.root)
         self.root.config(menu=self.menubar)
         self.file_menu=tk.Menu(self.menubar,tearoff=0)
-        self.file_menu.add_command(label='Open File',command=self.add_tab)
-        self.file_menu.add_command(label='Delete Current Tab',command=self.delete_tab)
+        self.file_menu.add_command(label='Open File',command=lambda: self.add_tab(1),accelerator="Shift+O")
+        self.file_menu.add_command(label='Delete Current Tab',command=lambda: self.delete_tab(1),accelerator="Shift+W")
+        # self.file_menu.add_command(label='Delete All Tabs',command=lambda: self.delete_all_tabs(1),accelerator="Ctrl+Shift+W")
         self.file_menu.add_separator()
         self.file_menu.add_command(label='Exit',command=self.root.destroy)
         self.menubar.add_cascade(label="File",menu=self.file_menu)
@@ -109,6 +110,8 @@ class RootClass:
         self.root.grid_columnconfigure(2, weight=1)
         self.root.grid_columnconfigure(3, weight=1)
 
+        self.root.bind("<Shift-O>",self.add_tab)
+
         if(len(RootClass.tabs_object)==0):
             self.disable_binds()
 
@@ -136,6 +139,7 @@ class RootClass:
         self.reset_button.config(state="disabled")
         self.breakpoint_button.config(state="disabled")
         self.file_menu.entryconfig("Delete Current Tab",state="disabled")
+        self.root.unbind("<Shift-W>")
 
     #To re enable binds
     def enable_binds(self):
@@ -155,9 +159,10 @@ class RootClass:
         self.timestamp_to_entry.bind('<Return>', self.search_string)
         self.root.bind("<F2>",self.call_F2Bind)
         self.root.bind("<F1>",self.call_add_del_breakpoint)
+        self.root.bind("<Shift-W>",self.delete_tab)
 
     #Adding a new tab
-    def add_tab(self):
+    def add_tab(self,event):
         new_tab=Tabs.Tab(self.notebook)
         RootClass.tabs_object.append(new_tab)
         new_tab.open_file()
@@ -165,12 +170,20 @@ class RootClass:
             self.enable_binds()
 
     #Deleting a tab
-    def delete_tab(self): 
+    def delete_tab(self,event): 
         self.active_tab=self.notebook.select()
         RootClass.tabs_object.remove(RootClass.tabs_object[self.notebook.index(self.active_tab)])
         self.notebook.forget(self.active_tab)
         if(len(RootClass.tabs_object)==0):
             self.disable_binds()
+    
+    # def delete_all_tabs(self,event):
+    #     for object in RootClass.tabs_object:
+    #         RootClass.tabs_object.remove(object)
+    #         self.notebook.forget(RootClass.tabs_object[self.notebook.index(object)])
+    #     if(len(RootClass.tabs_object)==0):
+    #         self.disable_binds()
+
 
 
     def clear_all(self):
@@ -403,7 +416,3 @@ class RootClass:
         timestampTo_second=timestampTo_obj.second
         timestampTo_obj=time(timestampTo_hour,timestampTo_minute,timestampTo_second,999999)
         return timestampTo_obj
-    
-
-    def del_tab(obj):
-        pass
