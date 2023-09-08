@@ -4,6 +4,7 @@ from tkinter import messagebox
 from datetime import datetime
 from datetime import time
 import Tabs
+from tkinter import filedialog
 
 class RootClass:
     
@@ -24,6 +25,7 @@ class RootClass:
         self.root.config(menu=self.menubar)
         self.file_menu=tk.Menu(self.menubar,tearoff=0)
         self.file_menu.add_command(label='Open File',command=lambda: self.add_tab(1),accelerator="Shift+O")
+        self.file_menu.add_command(label='Open Multiple Files',command=lambda: self.add_multiple_tab(1),accelerator="Ctrl+Shift+O")
         self.file_menu.add_command(label='Delete Current Tab',command=lambda: self.delete_tab(1),accelerator="Shift+W")
         self.file_menu.add_command(label='Delete All Tabs',command=lambda: self.delete_all_tabs(1),accelerator="Ctrl+Shift+W")
         self.file_menu.add_separator()
@@ -111,6 +113,7 @@ class RootClass:
         self.root.grid_columnconfigure(3, weight=1)
 
         self.root.bind("<Shift-O>",self.add_tab)
+        self.root.bind("<Control-Shift-KeyPress-O>",self.add_multiple_tab)
 
         if(len(RootClass.tabs_object)==0):
             self.disable_binds()
@@ -170,6 +173,16 @@ class RootClass:
         new_tab=Tabs.Tab(self.notebook)
         RootClass.tabs_object.append(new_tab)
         new_tab.open_file()
+        if(len(RootClass.tabs_object)>0):
+            self.enable_binds()
+    
+    # selecting multiple files/tabs
+    def add_multiple_tab(self,event):
+        files_name_list=filedialog.askopenfilenames(filetypes=[("Log Files","*.log")])
+        for file_name in files_name_list:
+            new_tab=Tabs.Tab(self.notebook)
+            RootClass.tabs_object.append(new_tab)
+            new_tab.open_multiple_files(file_name)
         if(len(RootClass.tabs_object)>0):
             self.enable_binds()
 

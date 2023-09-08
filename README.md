@@ -8,6 +8,7 @@ This Python GUI program is designed to help you manage and analyze multiple  log
 - View the entire log or specific sections of it.
 - Search filters -> general search , pid ,tid ,timestamp ,flag 
 - Multitab (add / delete new tabs)
+- Open Multiple files 
 - Filter with multiple tid , pid , searchtext
 - Clean UI/UX
 - Search in all tabs
