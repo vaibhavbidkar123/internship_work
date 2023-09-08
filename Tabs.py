@@ -210,7 +210,7 @@ class Tab:
                             #main search filter condition 
                             if pid or tid or searchText or flagValue or timeRecieved:
                                 if (not pid or content_pid in pid_list) and (not tid or content_tid in tid_list) and (self.checkSearchText(content,searchText_list)) and (content_flagValue==flagValue or flagValue=="")  and ((timestampFrom=="" and timestampTo=="") or (timestampFrom <= content_time_obj <= timestampTo) ):
-                                    if content in list(self.breakpointsLineNum.keys()):
+                                    if content in list(self.breakpointsLineNum.keys()) and content not in self.existingBreakPoints:
                                         startIndex=self.text_widget.index(tk.INSERT) #EXTRA
                                         endIndex=startIndex.split(".")[0]+".end"
                                         self.breakpointsLineNum[content]=[startIndex,endIndex] #UPTILL HERE FOR ALL
@@ -220,7 +220,7 @@ class Tab:
                                     self.matchesfound+=1 #increment matches found
                             #No entry in any field, display entire contents
                             else:
-                                if content in list(self.breakpointsLineNum.keys()):
+                                if content in list(self.breakpointsLineNum.keys()) and content not in self.existingBreakPoints:
                                     startIndex=self.text_widget.index(tk.INSERT)
                                     endIndex=startIndex.split(".")[0]+".end"
                                     self.breakpointsLineNum[content]=[startIndex,endIndex]
@@ -231,7 +231,7 @@ class Tab:
                             #If content is not in default LOG line format, control come here
                             #All fields should be empty except general search for this to execute
                             if not pid and not tid and flagValue=="" and timeRecieved==False and self.checkSearchText(content,searchText_list):
-                                if content in list(self.breakpointsLineNum.keys()):
+                                if content in list(self.breakpointsLineNum.keys()) and content not in self.existingBreakPoints:
                                     startIndex=self.text_widget.index(tk.INSERT)
                                     endIndex=startIndex.split(".")[0]+".end"
                                     self.breakpointsLineNum[content]=[startIndex,endIndex]
