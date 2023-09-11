@@ -1,10 +1,13 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
+from tkinter import filedialog
 from datetime import datetime
 from datetime import time
 import Tabs
-from tkinter import filedialog
+import json
+import os
+import cfg
 
 class RootClass:
     
@@ -24,6 +27,7 @@ class RootClass:
         self.menubar=tk.Menu(self.root)
         self.root.config(menu=self.menubar)
         self.file_menu=tk.Menu(self.menubar,tearoff=0)
+        self.package_menu=tk.Menu(self.menubar,tearoff=0)
         self.file_menu.add_command(label='Open File',command=lambda: self.add_tab(1),accelerator="Shift+O")
         self.file_menu.add_command(label='Open Multiple Files',command=lambda: self.add_multiple_tab(1),accelerator="Ctrl+Shift+O")
         self.file_menu.add_command(label='Delete Current Tab',command=lambda: self.delete_tab(1),accelerator="Shift+W")
@@ -31,14 +35,20 @@ class RootClass:
         self.file_menu.add_separator()
         self.file_menu.add_command(label='Exit',command=self.root.destroy)
         self.menubar.add_cascade(label="File",menu=self.file_menu)
+        self.menubar.add_cascade(label="Packages",menu=self.package_menu)
+        self.package_menu.add_command(label="Select Packages",command=self.select_package,accelerator="Shift+P")
+        self.package_menu.add_command(label="Import Package File",command=self.import_package)
 
         #General Search Entry
+        
         self.general_search_frame = tk.Frame(self.root)
         self.general_search_label = tk.Label(self.general_search_frame,text="Search:")
-        self.general_search_label.pack(side=tk.LEFT)
+        self.general_search_label.grid(row=0,column=0)
         self.general_search_entry = tk.Entry(self.general_search_frame,width=24)
-        self.general_search_entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
-        self.general_search_frame.grid(row=0, column=0, padx=18, pady=(0, 10), columnspan=2, sticky="w")
+        self.general_search_entry.grid(row=0,column=1)
+        self.general_search_frame.grid(row=0, column=0, padx=18, pady=(15, 0), columnspan=2, sticky="w")
+        self.package_status_label=tk.Label(self.general_search_frame,text="")
+        self.package_status_label.grid(row=1,column=1,sticky="w")
 
         #PID entry
         self.pid_frame = tk.Frame(self.root)
@@ -61,11 +71,12 @@ class RootClass:
         self.tid_frame.grid(row=1, column=3, padx=(25,20), pady=(5, 15), sticky="w")
 
         #Flag entry
+        self.flag_package_frame=tk.Frame(self.root)
+        self.flag_package_frame.grid(row=0, column=4, pady=(20, 10), sticky="w")
         self.menu= tk.StringVar()
         self.menu.set("Flag")
-        self.drop= tk.OptionMenu(self.root, self.menu,"All", "VERBOSE (V)","DEBUG (D)","INFO (I)","WARN (W)","ERROR (E)","FATAL (F)",command=self.search_using_flag)
-        self.drop.grid(row=0, column=4, pady=(20, 10), sticky="w")
-        
+        self.drop= tk.OptionMenu(self.flag_package_frame, self.menu,"All", "VERBOSE (V)","DEBUG (D)","INFO (I)","WARN (W)","ERROR (E)","FATAL (F)",command=self.search_using_flag)
+        self.drop.grid(row=0, column=0, pady=(20, 10), sticky="w")        
 
         #clear button
         self.clear_button_frame=tk.Frame(self.root)
@@ -120,6 +131,56 @@ class RootClass:
 
         self.active_tab=None
 
+    def select_package(self):
+        relative_path_package="cfg\package.json"
+        cfg.selected_packages=[]
+
+        package_path=os.path.normpath(os.path.join(cfg.absolute_path, relative_path_package))
+        self.child_window=tk.Toplevel(self.root)
+        self.child_window.protocol("WM_DELETE_WINDOW",self.update_package_status)
+        self.child_window.geometry("300x400")
+        self.child_window.title("Packages")
+        self.child_window_label=tk.Label(self.child_window,text="Select Packages:")
+        self.child_window_label.grid(row=0,column=0)
+        self.packages_listbox=tk.Listbox(self.child_window,selectmode="multiple")
+        self.packages_listbox.grid(row=1,column=0)
+        self.select_button=tk.Button(self.child_window,text="Done",command=self.get_selected_package_value)
+        self.select_button.grid(row=2,column=0)
+
+        try:
+            with open(package_path,"r") as f:
+                try:
+                    cfg.user_package=json.load(f)
+                except(Exception):
+                    messagebox.showerror("Error","Package file error.\n(Please check the package file)")
+        except(Exception):
+            messagebox.showerror("Error","Package file error.\n(Please check the package file)")
+        
+        cfg.user_package_keys=[key for key in list(cfg.user_package.keys())]
+        
+        for index in range(len(cfg.user_package_keys)):
+            self.packages_listbox.insert(tk.END,cfg.user_package_keys[index])
+    
+    def import_package(self):
+        relative_path_package="cfg"
+        package_path=os.path.normpath(os.path.join(cfg.absolute_path, relative_path_package))
+        os.startfile(package_path)
+        
+    def get_selected_package_value(self):
+        cfg.selected_packages=[]
+        selection=self.packages_listbox.curselection()
+        for index in selection:
+            cfg.selected_packages.append(cfg.user_package_keys[index])
+        self.update_package_status()
+    
+    def update_package_status(self):
+        if cfg.selected_packages:
+            self.package_status_label.config(text="Package Search is active.",foreground="forest green")
+        else:
+            self.package_status_label.config(text="")
+        self.child_window.destroy()
+
+        
     def go_to_next_element(self,event):
         event.widget.tk_focusNext().focus()
     

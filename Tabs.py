@@ -4,6 +4,7 @@ from tkinter import filedialog
 from tkinter import messagebox
 from datetime import datetime
 import re
+import cfg
 import Root
 
 class Tab:
@@ -200,6 +201,14 @@ class Tab:
                 flag=1
         return flag
 
+    def appendPackagesToSearchText(self,searchText):
+        searchText=searchText.strip('|')
+        for key in cfg.selected_packages:
+            for element in cfg.user_package[key]:
+                searchText+="|"+element
+        newsearchtext=searchText.strip('|')
+        return newsearchtext
+
     
                     #--MAIN SEARCH ALGORITHM--#
     def general_search(self,searchText,pid,tid,flagValue,timestampFrom,timestampTo):
@@ -213,7 +222,8 @@ class Tab:
         #if empty time recieved then set the timerecieved to true
         if(timestampFrom!="" and timestampTo!=""):
             timeRecieved=True
-        #sanitize general search for piping (or condition)    
+        #sanitize general search for piping (or condition)
+        searchText=self.appendPackagesToSearchText(searchText)    
         searchText_list=self.sanitizeOrString(searchText)
         pid_list=self.sanitizeOrString(pid) #sanitize pid list
         tid_list=self.sanitizeOrString(tid) #sanitize tid list

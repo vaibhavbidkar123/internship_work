@@ -1,0 +1,15 @@
+{
+    "Display": [
+        "displayservice",
+        "displaydriver"
+    ],
+    "Sound": [
+        "sound",
+        "soundmanager",
+        "kick Ex WDT"
+    ],
+    "Battery":
+    [
+        "BatteryStatus","BatteryManager","powersaver"
+    ]
+}
