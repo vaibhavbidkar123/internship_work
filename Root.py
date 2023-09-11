@@ -132,8 +132,9 @@ class RootClass:
         self.active_tab=None
 
     def select_package(self):
+        self.package_menu.entryconfig("Select Packages",state="disabled")
         relative_path_package="cfg\package.json"
-        cfg.selected_packages=[]
+        # cfg.user_selected_packages=[]
 
         package_path=os.path.normpath(os.path.join(cfg.absolute_path, relative_path_package))
         self.child_window=tk.Toplevel(self.root)
@@ -157,9 +158,12 @@ class RootClass:
             messagebox.showerror("Error","Package file error.\n(Please check the package file)")
         
         cfg.user_package_keys=[key for key in list(cfg.user_package.keys())]
-        
+
         for index in range(len(cfg.user_package_keys)):
             self.packages_listbox.insert(tk.END,cfg.user_package_keys[index])
+
+        for index in cfg.user_package_selected_indices:
+            self.packages_listbox.selection_set(index)
     
     def import_package(self):
         relative_path_package="cfg"
@@ -167,17 +171,19 @@ class RootClass:
         os.startfile(package_path)
         
     def get_selected_package_value(self):
-        cfg.selected_packages=[]
+        cfg.user_selected_packages=[]
         selection=self.packages_listbox.curselection()
-        for index in selection:
-            cfg.selected_packages.append(cfg.user_package_keys[index])
+        cfg.user_package_selected_indices=list(selection)
+        for index in cfg.user_package_selected_indices:
+            cfg.user_selected_packages.append(cfg.user_package_keys[index])
         self.update_package_status()
     
     def update_package_status(self):
-        if cfg.selected_packages:
+        if cfg.user_selected_packages:
             self.package_status_label.config(text="Package Search is active.",foreground="forest green")
         else:
             self.package_status_label.config(text="")
+        self.package_menu.entryconfig("Select Packages",state="active")
         self.child_window.destroy()
 
         
@@ -278,8 +284,11 @@ class RootClass:
     
     #Call reset of Tabs
     def call_reset(self):
+        cfg.user_package_selected_indices=[]
+        cfg.user_selected_packages=[]
         self.active_tab=self.notebook.select()
         Tabs.Tab.reset(RootClass.tabs_object[self.notebook.index(self.active_tab)])
+        self.update_package_status()
 
     #Call F2Bind of Tabs
     def call_F2Bind(self,event):

@@ -203,7 +203,7 @@ class Tab:
 
     def appendPackagesToSearchText(self,searchText):
         searchText=searchText.strip('|')
-        for key in cfg.selected_packages:
+        for key in cfg.user_selected_packages:
             for element in cfg.user_package[key]:
                 searchText+="|"+element
         newsearchtext=searchText.strip('|')
