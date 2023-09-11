@@ -180,16 +180,16 @@ class Tab:
         self.breakpointsLineNum.clear()
         Root.RootClass.clear_all(Root.RootClass.RootObject)
 
-    def sanitizeSearchText(self,searchText):
+    def sanitizeOrString(self,input_string):
     #Convert searchtext to list based on '|' split
     #Convert each string to lowercase characters for case insensitive search
-        searchText_list=searchText.split("|")
-        new_searchText_list=[]
-        for element in searchText_list:
+        text_list=input_string.split("|")
+        new_text_list=[]
+        for element in text_list:
             new_element=element.strip()
             new_element=new_element.lower()
-            new_searchText_list.append(new_element)
-        return new_searchText_list
+            new_text_list.append(new_element)
+        return new_text_list
 
     def checkSearchText(self,content,searchText_list):
         #Return true if content exists in searchText_list
@@ -208,16 +208,15 @@ class Tab:
         self.matchesfound=0  
         self.text_widget.config(state=tk.NORMAL)
         self.text_widget.delete("1.0",tk.END)
-        pid_list=pid.split(",") #pid list splited and stored 
-        tid_list=tid.split(",") #tid list splited and stored 
         timeRecieved=False #time is not recieved 
         time_to_check_format='%H:%M:%S.%f'  #time format to check 
-
         #if empty time recieved then set the timerecieved to true
         if(timestampFrom!="" and timestampTo!=""):
             timeRecieved=True
         #sanitize general search for piping (or condition)    
-        searchText_list=self.sanitizeSearchText(searchText)
+        searchText_list=self.sanitizeOrString(searchText)
+        pid_list=self.sanitizeOrString(pid) #sanitize pid list
+        tid_list=self.sanitizeOrString(tid) #sanitize tid list
         content=True
         if(self.file_path==""):
             pass
