@@ -261,7 +261,7 @@ class RootClass:
     def add_tab(self,event):
         new_tab=Tabs.Tab(self.notebook)
         RootClass.tabs_object.append(new_tab)
-        new_tab.open_file()
+        new_tab.open_file("singlefile")
         if(len(RootClass.tabs_object)>0):
             self.enable_binds()
     
@@ -269,9 +269,10 @@ class RootClass:
     def add_multiple_tab(self,event):
         files_name_list=filedialog.askopenfilenames(filetypes=[("Log Files","*.log")])
         for file_name in files_name_list:
+            print(file_name)
             new_tab=Tabs.Tab(self.notebook)
             RootClass.tabs_object.append(new_tab)
-            new_tab.open_multiple_files(file_name)
+            new_tab.open_file(file_name)
         if(len(RootClass.tabs_object)>0):
             self.enable_binds()
 

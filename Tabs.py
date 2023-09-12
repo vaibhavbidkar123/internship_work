@@ -49,42 +49,13 @@ class Tab:
 
         #file name to be viewed on tab 
         new_tab_object.add(self.tab_frame,text=self.file_name)
-
-   
-    def open_multiple_files(self,file_path_passed):
-        
-        
-        self.file_path=file_path_passed
-        self.file_path_name=self.file_path
-        self.file_path_name=self.file_path_name.split("/")
-        self.file_name=self.file_path_name[-1]  #file name
-        content=True
-        if self.file_path:
-            #Changing tab name
-            self.notebook.add(self.tab_frame,text=self.file_name) #tab name updated to file name
-            self.text_widget.config(state=tk.NORMAL)
-            self.text_widget.delete("1.0",tk.END) #delete previous content
-            try:
-                with open(self.file_path,'r',encoding="ANSI",errors="replace") as file:
-                    while content:
-                        content=file.readline()
-                        self.text_widget.insert(tk.INSERT,content) #insert entries line by line 
-                self.text_widget.config(state=tk.DISABLED)
-            except(Exception):
-                self.text_widget.delete("1.0",tk.END)
-        else:
-            #DELETE TAB HAS TO BE CALLED HERE
-            self.notebook.add(self.tab_frame,text="Empty File")  # if no file is selected
-            self.text_widget.config(state=tk.NORMAL)
-            self.text_widget.delete("1.0",tk.END)
-            self.text_widget.config(state=tk.DISABLED)
-        self.scrollbar.config(command=self.text_widget.yview)
-    
-
-        
+     
    #Opening a file and displaying all its contents 
-    def open_file(self):
-        self.file_path=filedialog.askopenfilename(filetypes=[("Log Files","*.log")]) #opens only log files 
+    def open_file(self,file_path_passed):
+        if(file_path_passed=="singlefile"):
+            self.file_path=filedialog.askopenfilename(filetypes=[("Log Files","*.log")]) #opens only log files 
+        else:
+            self.file_path=file_path_passed
         self.file_path_name=self.file_path
         self.file_path_name=self.file_path_name.split("/")
         self.file_name=self.file_path_name[-1]  #file name
