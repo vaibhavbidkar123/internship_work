@@ -36,7 +36,7 @@ class RootClass:
         self.file_menu.add_command(label='Exit',command=self.root.destroy)
         self.menubar.add_cascade(label="File",menu=self.file_menu)
         self.menubar.add_cascade(label="Packages",menu=self.package_menu)
-        self.package_menu.add_command(label="Select Packages",command=self.select_package,accelerator="Shift+P")
+        self.package_menu.add_command(label="Select Packages",command=lambda: self.select_package(1),accelerator="Shift+P")
         self.package_menu.add_command(label="Import Package File",command=self.import_package)
 
         #General Search Entry
@@ -123,7 +123,9 @@ class RootClass:
         self.root.grid_columnconfigure(2, weight=1)
         self.root.grid_columnconfigure(3, weight=1)
 
+        #Binds for root window, set to on by default
         self.root.bind("<Shift-O>",self.add_tab)
+        self.root.bind("<Shift-P>",self.select_package)
         self.root.bind("<Control-Shift-KeyPress-O>",self.add_multiple_tab)
 
         if(len(RootClass.tabs_object)==0):
@@ -131,8 +133,9 @@ class RootClass:
 
         self.active_tab=None
 
-    def select_package(self):
+    def select_package(self,event):
         self.package_menu.entryconfig("Select Packages",state="disabled")
+        self.root.unbind('<Shift-P>')
         relative_path_package="cfg\package.json"
         # cfg.user_selected_packages=[]
 
@@ -170,11 +173,14 @@ class RootClass:
         for index in cfg.user_package_selected_indices:
             self.packages_listbox.selection_set(index)
     
+    #Opens the folder to import cfg file
     def import_package(self):
         relative_path_package="cfg"
         package_path=os.path.normpath(os.path.join(cfg.absolute_path, relative_path_package))
         os.startfile(package_path)
-        
+
+    #Gets packages that have been selected by the user
+    #Called when DONE is clicked
     def get_selected_package_value(self):
         cfg.user_selected_packages=[]
         selection=self.packages_listbox.curselection()
@@ -183,12 +189,15 @@ class RootClass:
             cfg.user_selected_packages.append(cfg.user_package_keys[index])
         self.update_package_status()
     
+    #Updates package status
+    #Called when DONE is pressed or CLOSE button is clicked.
     def update_package_status(self):
         if cfg.user_selected_packages:
             self.package_status_label.config(text="Package Search is active.",foreground="forest green")
         else:
             self.package_status_label.config(text="")
         self.package_menu.entryconfig("Select Packages",state="active")
+        self.root.bind("<Shift-P>",self.select_package)
         self.child_window.destroy()
 
         
