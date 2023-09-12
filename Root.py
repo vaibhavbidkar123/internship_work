@@ -11,8 +11,8 @@ import cfg
 
 class RootClass:
     
-    # stores the adresses of all Tab objects , declared as static 
-    tabs_object=[]
+    #static variables
+    tabs_object=[]     # stores the adresses of all Tab objects , declared as static 
     RootObject=None
 
     def __init__(self,root):
@@ -138,6 +138,7 @@ class RootClass:
 
         package_path=os.path.normpath(os.path.join(cfg.absolute_path, relative_path_package))
         self.child_window=tk.Toplevel(self.root)
+        self.child_window.iconbitmap(cfg.icon_path)
         self.child_window.protocol("WM_DELETE_WINDOW",self.update_package_status)
         self.child_window.geometry("300x400")
         self.child_window.title("Packages")
@@ -145,6 +146,10 @@ class RootClass:
         self.child_window_label.grid(row=0,column=0)
         self.packages_listbox=tk.Listbox(self.child_window,selectmode="multiple")
         self.packages_listbox.grid(row=1,column=0)
+        self.child_window_scrollbar=tk.Scrollbar(self.child_window)
+        self.child_window_scrollbar.grid(row=1,column=1)
+        self.packages_listbox.config(yscrollcommand=self.child_window_scrollbar.set)
+        self.child_window_scrollbar.config(command=self.packages_listbox.yview)
         self.select_button=tk.Button(self.child_window,text="Done",command=self.get_selected_package_value)
         self.select_button.grid(row=2,column=0)
 
@@ -261,6 +266,7 @@ class RootClass:
         if(len(RootClass.tabs_object)==0):
             self.disable_binds()
     
+    #Delete all tabs
     def delete_all_tabs(self,event):
         while(len(RootClass.tabs_object)>0):
             self.active_tab=self.notebook.select()

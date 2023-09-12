@@ -1,15 +1,18 @@
 {
-    "Disp": [
+    "Display": [
         "displayservice",
         "displaydriver"
     ],
     "Sound": [
         "sound",
-        "soundmanager",
-        "kick Ex WDT"
+        "soundmanager"
     ],
     "Battery":
     [
         "BatteryStatus","BatteryManager","powersaver"
+    ],
+    "Network":
+    [
+        "NetworkSecurityConfig","NetworkPolicy","WifiManager"
     ]
 }
