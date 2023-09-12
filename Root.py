@@ -134,34 +134,41 @@ class RootClass:
         self.active_tab=None
 
     def select_package(self,event):
+        #Disable binds to allow only one child window to spawn
         self.package_menu.entryconfig("Select Packages",state="disabled")
         self.root.unbind('<Shift-P>')
-        relative_path_package="cfg\package.json"
-        # cfg.user_selected_packages=[]
-
-        package_path=os.path.normpath(os.path.join(cfg.absolute_path, relative_path_package))
+        relative_path_package="cfg\package.json"    #Path of the .json file
+        package_path=os.path.normpath(os.path.join(cfg.absolute_path, relative_path_package)) #Path of package file joined with absolute path
+        
+        #Child window spawned
         self.child_window=tk.Toplevel(self.root)
         self.child_window.iconbitmap(cfg.icon_path)
         self.child_window.protocol("WM_DELETE_WINDOW",self.update_package_status)
         self.child_window.geometry("400x400")
         self.child_window.resizable(True,False)
         self.child_window.title("Packages")
-        self.child_window_label=tk.Label(self.child_window,text="Select Packages",font=("Areal",8,"bold"))
+        self.child_window_label=tk.Label(self.child_window,text="Select Packages",font=("Arial",8,"bold"))
         self.child_window_label.pack(side=tk.TOP,pady=10)
 
+        #Listbox frame
         self.listbox_frame=tk.Frame(self.child_window)
         self.listbox_frame.pack(side=tk.TOP)
 
+        #Listbox of user packages
         self.packages_listbox=tk.Listbox(self.listbox_frame,selectmode="multiple",height=14,width=25)
         self.packages_listbox.pack(side=tk.LEFT,fill=tk.BOTH,expand=True)
 
+        #Scrollbar for listbox
         self.child_window_scrollbar=tk.Scrollbar(self.listbox_frame)
         self.child_window_scrollbar.pack(expand=True, fill=tk.BOTH)
         self.packages_listbox.config(yscrollcommand=self.child_window_scrollbar.set)
         self.child_window_scrollbar.config(command=self.packages_listbox.yview)
+
+        #Done button
         self.select_button=tk.Button(self.child_window,text="Done",command=self.get_selected_package_value)
         self.select_button.pack(side=tk.TOP,pady=10)
 
+        #Load the packages.json file to packages listbox
         try:
             with open(package_path,"r") as f:
                 try:
@@ -171,15 +178,19 @@ class RootClass:
         except(Exception):
             messagebox.showerror("Error","Package file error.\n(Please check the package file)")
         
+        #List of keys from the json file
         cfg.user_package_keys=[key for key in list(cfg.user_package.keys())]
 
+        #Put the keys into the packages listbox
         for index in range(len(cfg.user_package_keys)):
             self.packages_listbox.insert(tk.END,cfg.user_package_keys[index])
 
+        #Reload previous selection of packages(history)
         for index in cfg.user_package_selected_indices:
             self.packages_listbox.selection_set(index)
     
-    #Opens the folder to import cfg file
+    #Opens the folder directory to import cfg file
+    #Called when import package is clicked
     def import_package(self):
         relative_path_package="cfg"
         package_path=os.path.normpath(os.path.join(cfg.absolute_path, relative_path_package))
@@ -197,7 +208,8 @@ class RootClass:
             cfg.user_selected_packages.append(cfg.user_package_keys[index])
         self.update_package_status()
     
-    #Updates package status
+    #Updates package status label below searchbar
+    #Rebinds the disabled binds which were disabled when child window was spawned
     #Called when DONE is pressed or CLOSE button is clicked.
     def update_package_status(self):
         if cfg.user_selected_packages:
@@ -213,6 +225,7 @@ class RootClass:
         event.widget.tk_focusNext().focus()
     
     #To disable binds when no tabs are present
+    #Called when no files are opened
     def disable_binds(self):
         #Disable enter binds
         self.general_search_entry.unbind('<Return>')
@@ -236,6 +249,7 @@ class RootClass:
         self.root.unbind("<Control-Shift-KeyPress-W>")
 
     #To re enable binds
+    #Called when atleast one file is present
     def enable_binds(self):
         #Enable all buttons
         self.search_button.config(state="active")
@@ -258,6 +272,7 @@ class RootClass:
         self.root.bind("<Control-Shift-KeyPress-W>",self.delete_all_tabs)
 
     #Adding a new tab
+    #Called when open a file is pressed
     def add_tab(self,event):
         new_tab=Tabs.Tab(self.notebook)
         RootClass.tabs_object.append(new_tab)
@@ -266,6 +281,7 @@ class RootClass:
             self.enable_binds()
     
     # selecting multiple files/tabs
+    #Called when open multiple files is pressed
     def add_multiple_tab(self,event):
         files_name_list=filedialog.askopenfilenames(filetypes=[("Log Files","*.log"),("Gz Files","*.gz")])
         for file_name in files_name_list:
@@ -276,6 +292,7 @@ class RootClass:
             self.enable_binds()
 
     #Deleting a tab
+    #Called when delete tab is pressed
     def delete_tab(self,event): 
         self.active_tab=self.notebook.select()
         RootClass.tabs_object.remove(RootClass.tabs_object[self.notebook.index(self.active_tab)])
@@ -284,6 +301,7 @@ class RootClass:
             self.disable_binds()
     
     #Delete all tabs
+    #Called when delete all tabs is presssed
     def delete_all_tabs(self,event):
         while(len(RootClass.tabs_object)>0):
             self.active_tab=self.notebook.select()
@@ -293,8 +311,8 @@ class RootClass:
         if(len(RootClass.tabs_object)==0):
             self.disable_binds()
 
-
-
+    #Clears all the fields and calls empty search
+    #Called when clear all button is pressed
     def clear_all(self):
         #Clears all entries from all fields
         self.general_search_entry.delete(0,'end')
@@ -305,7 +323,8 @@ class RootClass:
         self.menu.set("Flag")
         self.search_string(1)
     
-    #Call reset of Tabs
+    #Clears all fields+breakpoint+packages
+    #Called when reset button is pressed
     def call_reset(self):
         cfg.user_package_selected_indices=[]
         cfg.user_selected_packages=[]
@@ -313,18 +332,21 @@ class RootClass:
         Tabs.Tab.reset(RootClass.tabs_object[self.notebook.index(self.active_tab)])
         self.update_package_status()
 
-    #Call F2Bind of Tabs
+    #Call F2Bind of Tabs object
+    #Called when F2 is pressed
     def call_F2Bind(self,event):
         self.active_tab=self.notebook.select()
         Tabs.Tab.F2Bind(RootClass.tabs_object[self.notebook.index(self.active_tab)],1)
 
-    #Call add_del_breakpoint of Tabs
+    #Call add_del_breakpoint of Tabs object
+    #Called when F1 is pressed
     def call_add_del_breakpoint(self,event):
         self.active_tab=self.notebook.select()
         Tabs.Tab.addBreakpoint(RootClass.tabs_object[self.notebook.index(self.active_tab)],1)
             
 
-    #Searching a string on search in file button click
+    #Getting all the input fields values and passing it to searchBtnClick
+    #Called when search in file is pressed
     def search_string(self,event):
         #Get all values
         general_search=self.general_search_entry.get()
@@ -389,6 +411,7 @@ class RootClass:
             Tabs.Tab.searchBtnClick(RootClass.tabs_object[self.notebook.index(self.active_tab)],general_search,pid,tid,flagValue,timestamp_from_obj,timestamp_to_obj)
 
     #Searching in all files
+    #Called when search all is pressed
     def search_all(self):
         general_search=self.general_search_entry.get()
         pid=self.pid_search_entry.get()
@@ -450,6 +473,7 @@ class RootClass:
                 Tabs.Tab.searchBtnClick(object,general_search,pid,tid,flagValue,timestamp_from_obj,timestamp_to_obj)
     
     #Searching when flag value is updated
+    #Called when flag value is updated
     def search_using_flag(self,flagValue):
         general_search=self.general_search_entry.get()
         pid=self.pid_search_entry.get()
@@ -512,6 +536,7 @@ class RootClass:
             Tabs.Tab.searchBtnClick(RootClass.tabs_object[self.notebook.index(self.active_tab)],general_search,pid,tid,flagValue,timestamp_from_obj,timestamp_to_obj)
 
     #To find the time format of timestampTo and timestampFrom
+    #Called from search function
     def getTimeFormat(self,timeobject):
         partsFrom=timeobject.split(".")
         if(len(partsFrom)==1):
@@ -522,6 +547,7 @@ class RootClass:
     
 
     #To add .999 to timestampTo field if HH:MM:SS format format
+    #Called from search function
     def addMilliseconds(self,timestampTo_obj):
         timestampTo_hour=timestampTo_obj.hour
         timestampTo_minute=timestampTo_obj.minute

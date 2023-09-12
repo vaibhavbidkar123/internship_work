@@ -51,8 +51,10 @@ class Tab:
         #file name to be viewed on tab 
         new_tab_object.add(self.tab_frame,text=self.file_name)
      
-   #Opening a file and displaying all its contents 
+   #Opening a file and displaying all its contents
+   #Called from Root (add_tab,add_multiple_tab)
     def open_file(self,file_path_passed):
+        #Condition to check whether add_tab or add_multiple_tab calls open_file 
         if(file_path_passed=="singlefile"):
             self.file_path=filedialog.askopenfilename(filetypes=[("Log Files","*.log"),("Gz Files","*.gz")])
         else:
@@ -62,6 +64,7 @@ class Tab:
         self.file_name=self.file_path_name[-1]  #file name
         self.file_extension=self.file_path.split(".")[-1]
         content=True
+        #If file extension is .log
         if self.file_extension=="log":
             #Changing tab name
             self.notebook.add(self.tab_frame,text=self.file_name) #tab name updated to file name
@@ -75,13 +78,14 @@ class Tab:
                 self.text_widget.config(state=tk.DISABLED)
             except(Exception):
                 self.text_widget.delete("1.0",tk.END)
-        
+        #If file extension is .gz
         elif self.file_extension=="gz":
             #Changing tab name
             self.notebook.add(self.tab_frame,text=self.file_name) #tab name updated to file name
             self.text_widget.config(state=tk.NORMAL)
             self.text_widget.delete("1.0",tk.END) #delete previous content
             try:
+                #open the gz file and read
                 with gzip.open(self.file_path, 'r') as file:
                     while content:
                         content=file.readline()
@@ -89,19 +93,21 @@ class Tab:
                 self.text_widget.config(state=tk.DISABLED)
             except(Exception):
                 self.text_widget.delete("1.0",tk.END)
-        
+        #Else open empty file
         else:
-            #DELETE TAB HAS TO BE CALLED HERE
             self.notebook.add(self.tab_frame,text="Empty File")  # if no file is selected
             self.text_widget.config(state=tk.NORMAL)
             self.text_widget.delete("1.0",tk.END)
             self.text_widget.config(state=tk.DISABLED)
         self.scrollbar.config(command=self.text_widget.yview)
     
+    #Calls general search in particular object (acts as parent search)
+    #Called from Root (search_string,search_all,search_using_flag)
     def searchBtnClick(self,general_search_string,pid,tid,flagValue,timestamp_from_obj,timestamp_to_obj):
         self.general_search(general_search_string,pid,tid,flagValue,timestamp_from_obj,timestamp_to_obj)
 
-    
+    #To add breakpoint in selected file
+    #Called from Root (call_add_del_breakpoint)
     def addBreakpoint(self,event):
         #TRY-CATCH for getting the selection
         try:
@@ -148,51 +154,57 @@ class Tab:
         except(Exception):
             pass
     
+    #Cycles through breakpoints when F2 is pressed.
+    #Called from Root (call_F2Bind)
     def F2Bind(self,event):
         #Circular f2 movement
         #try catch since exception is generated if you try to access empty list element
         try:
-            listOfValues=[]
+            listOfValues=[] #existing line numbers in current search state
             for item in self.existingBreakPoints:
                 listOfValues.append(self.breakpointsLineNum[item])
             listOfValues.sort(key=lambda element: float(element[0])) #SORT the list based on line number order.
-            currentElementToDisplay=listOfValues[self.breakpointCursor][0]
-            self.text_widget.see(currentElementToDisplay)
-            self.breakpointCursor+=1
+            currentElementToDisplay=listOfValues[self.breakpointCursor][0] #Select the index from list based on breakpointcursor
+            self.text_widget.see(currentElementToDisplay) #Scroll to the breakpoint index
+            self.breakpointCursor+=1 #Set breakpoint cursor to point to next element
             if(self.breakpointCursor==len(listOfValues)):
-                self.breakpointCursor=0
-        except(Exception):
+                self.breakpointCursor=0 #Reset breakpoint cursor when end of list is reached
+        except(Exception): #Only exception is for index error, so pass it
             pass
 
+    #Called from Root (call_reset)
     def reset(self):
     #Resets breakpoints + entry
         self.breakpointsLineNum.clear()
         Root.RootClass.clear_all(Root.RootClass.RootObject)
 
+    #For splitting the input_string(searchText,pid,tid) based on "|"
+    #Called from Tabs (general_search)
     def sanitizeOrString(self,input_string):
     #Convert searchtext to list based on '|' split
-    #Convert each string to lowercase characters for case insensitive search
         text_list=input_string.split("|")
         new_text_list=[]
         for element in text_list:
             new_element=element.strip()
+            #Convert each string to lowercase characters for case insensitive search
             new_element=new_element.lower()
             new_text_list.append(new_element)
         return new_text_list
 
+    #Checks whether content is present in searchText_list
+    #Called from Tabs (general_search)
     def checkSearchText(self,content,searchText_list):
-        #Return true if content exists in searchText_list
-        #Else return false if there is no match
         flag=0
         for element in searchText_list:
-            if element in content.casefold():
+            if element in content.casefold(): #Case insensitive match
                 flag=1
         return flag
 
+    #Append selected package's values to the searchText string 
     def appendPackagesToSearchText(self,searchText):
-        searchText=searchText.strip('|')
-        for key in cfg.user_selected_packages:
-            for element in cfg.user_package[key]:
+        searchText=searchText.strip('|') #Remove '|' from front and end of string
+        for key in cfg.user_selected_packages: #Iterate through each key from user selected packages
+            for element in cfg.user_package[key]: #For each element of that key, add it to searchtext with "|"
                 searchText+="|"+element
         newsearchtext=searchText.strip('|')
         return newsearchtext
@@ -220,6 +232,7 @@ class Tab:
             pass
         else:
             try:
+                #Search criteria if file extension is .log
                 if(self.file_extension=="log"):
                     with open(self.file_path,"r", encoding="ANSI", errors="replace") as f:
                         while content_line:
@@ -268,6 +281,8 @@ class Tab:
                                         self.existingBreakPoints.append(content)
                                     self.text_widget.insert(tk.INSERT,content)
                                     self.matchesfound+=1
+                                    
+                #Search criteria if file extension is .gz
                 if(self.file_extension=="gz"):
                     with gzip.open(self.file_path, 'r') as f:
                         while content_line:
