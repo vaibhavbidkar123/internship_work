@@ -183,7 +183,9 @@ class RootClass:
     def import_package(self):
         relative_path_package="cfg"
         package_path=os.path.normpath(os.path.join(cfg.absolute_path, relative_path_package))
-        os.startfile(package_path)
+        user_choice=messagebox.askokcancel("Info","You will be redirected to the packages.json directory.\nPlease restart the application once you update the package file.")
+        if(user_choice):
+            os.startfile(package_path)
 
     #Gets packages that have been selected by the user
     #Called when DONE is clicked
