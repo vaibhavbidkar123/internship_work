@@ -143,18 +143,24 @@ class RootClass:
         self.child_window=tk.Toplevel(self.root)
         self.child_window.iconbitmap(cfg.icon_path)
         self.child_window.protocol("WM_DELETE_WINDOW",self.update_package_status)
-        self.child_window.geometry("300x400")
+        self.child_window.geometry("400x400")
+        self.child_window.resizable(True,False)
         self.child_window.title("Packages")
-        self.child_window_label=tk.Label(self.child_window,text="Select Packages:")
-        self.child_window_label.grid(row=0,column=0)
-        self.packages_listbox=tk.Listbox(self.child_window,selectmode="multiple")
-        self.packages_listbox.grid(row=1,column=0)
-        self.child_window_scrollbar=tk.Scrollbar(self.child_window)
-        self.child_window_scrollbar.grid(row=1,column=1)
+        self.child_window_label=tk.Label(self.child_window,text="Select Packages",font=("Areal",8,"bold"))
+        self.child_window_label.pack(side=tk.TOP,pady=10)
+
+        self.listbox_frame=tk.Frame(self.child_window)
+        self.listbox_frame.pack(side=tk.TOP)
+
+        self.packages_listbox=tk.Listbox(self.listbox_frame,selectmode="multiple",height=14,width=25)
+        self.packages_listbox.pack(side=tk.LEFT,fill=tk.BOTH,expand=True)
+
+        self.child_window_scrollbar=tk.Scrollbar(self.listbox_frame)
+        self.child_window_scrollbar.pack(expand=True, fill=tk.BOTH)
         self.packages_listbox.config(yscrollcommand=self.child_window_scrollbar.set)
         self.child_window_scrollbar.config(command=self.packages_listbox.yview)
         self.select_button=tk.Button(self.child_window,text="Done",command=self.get_selected_package_value)
-        self.select_button.grid(row=2,column=0)
+        self.select_button.pack(side=tk.TOP,pady=10)
 
         try:
             with open(package_path,"r") as f:
