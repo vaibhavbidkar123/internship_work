@@ -4,6 +4,7 @@ from tkinter import filedialog
 from tkinter import messagebox
 from datetime import datetime
 import re
+import gzip
 import cfg
 import Root
 
@@ -53,14 +54,15 @@ class Tab:
    #Opening a file and displaying all its contents 
     def open_file(self,file_path_passed):
         if(file_path_passed=="singlefile"):
-            self.file_path=filedialog.askopenfilename(filetypes=[("Log Files","*.log")]) #opens only log files 
+            self.file_path=filedialog.askopenfilename(filetypes=[("Log Files","*.log"),("Gz Files","*.gz")])
         else:
             self.file_path=file_path_passed
         self.file_path_name=self.file_path
         self.file_path_name=self.file_path_name.split("/")
         self.file_name=self.file_path_name[-1]  #file name
+        self.file_extension=self.file_path.split(".")[-1]
         content=True
-        if self.file_path:
+        if self.file_extension=="log":
             #Changing tab name
             self.notebook.add(self.tab_frame,text=self.file_name) #tab name updated to file name
             self.text_widget.config(state=tk.NORMAL)
@@ -73,6 +75,21 @@ class Tab:
                 self.text_widget.config(state=tk.DISABLED)
             except(Exception):
                 self.text_widget.delete("1.0",tk.END)
+        
+        elif self.file_extension=="gz":
+            #Changing tab name
+            self.notebook.add(self.tab_frame,text=self.file_name) #tab name updated to file name
+            self.text_widget.config(state=tk.NORMAL)
+            self.text_widget.delete("1.0",tk.END) #delete previous content
+            try:
+                with gzip.open(self.file_path, 'r') as file:
+                    while content:
+                        content=file.readline()
+                        self.text_widget.insert(tk.INSERT,content) #insert entries line by line 
+                self.text_widget.config(state=tk.DISABLED)
+            except(Exception):
+                self.text_widget.delete("1.0",tk.END)
+        
         else:
             #DELETE TAB HAS TO BE CALLED HERE
             self.notebook.add(self.tab_frame,text="Empty File")  # if no file is selected
@@ -198,57 +215,107 @@ class Tab:
         searchText_list=self.sanitizeOrString(searchText)
         pid_list=self.sanitizeOrString(pid) #sanitize pid list
         tid_list=self.sanitizeOrString(tid) #sanitize tid list
-        content=True
+        content_line=True
         if(self.file_path==""):
             pass
         else:
             try:
-                with open(self.file_path,"r", encoding="ANSI", errors="replace") as f:
-                    while content:
-                        content=f.readline()
-                        content_split=content.split()
-                        if(len(content_split)>4):
-                            temp = content.split(":") #split each entry
-                            content_split=[":".join(temp[0:3])] + temp[3:] # join first 3 elements of the list 
-                            content_split_first_part=content_split[0].split() #first part splitted 
-                            content_time=content_split_first_part[1] #time
-                            content_time_obj=datetime.strptime(content_time,time_to_check_format).time() #to validate the time 
-                            content_pid=content_split_first_part[2] #pid
-                            content_tid=content_split_first_part[3] #tid
-                            content_flagValue=content_split_first_part[4] #flag
-                            
+                if(self.file_extension=="log"):
+                    with open(self.file_path,"r", encoding="ANSI", errors="replace") as f:
+                        while content_line:
+                            content_line=f.readline()
+                            content=str(content_line)
+                            content_split=content.split()
+                            if(len(content_split)>4):
+                                temp = content.split(":") #split each entry
+                                content_split=[":".join(temp[0:3])] + temp[3:] # join first 3 elements of the list 
+                                content_split_first_part=content_split[0].split() #first part splitted 
+                                content_time=content_split_first_part[1] #time
+                                content_time_obj=datetime.strptime(content_time,time_to_check_format).time() #to validate the time 
+                                content_pid=content_split_first_part[2] #pid
+                                content_tid=content_split_first_part[3] #tid
+                                content_flagValue=content_split_first_part[4] #flag
+                                
 
-                            #main search filter condition 
-                            if pid or tid or searchText or flagValue or timeRecieved:
-                                if (not pid or content_pid in pid_list) and (not tid or content_tid in tid_list) and (self.checkSearchText(content,searchText_list)) and (content_flagValue==flagValue or flagValue=="")  and ((timestampFrom=="" and timestampTo=="") or (timestampFrom <= content_time_obj <= timestampTo) ):
+                                #main search filter condition 
+                                if pid or tid or searchText or flagValue or timeRecieved:
+                                    if (not pid or content_pid in pid_list) and (not tid or content_tid in tid_list) and (self.checkSearchText(content,searchText_list)) and (content_flagValue==flagValue or flagValue=="")  and ((timestampFrom=="" and timestampTo=="") or (timestampFrom <= content_time_obj <= timestampTo) ):
+                                        if content in list(self.breakpointsLineNum.keys()) and content not in self.existingBreakPoints:
+                                            startIndex=self.text_widget.index(tk.INSERT) #EXTRA
+                                            endIndex=startIndex.split(".")[0]+".end"
+                                            self.breakpointsLineNum[content]=[startIndex,endIndex] #UPTILL HERE FOR ALL
+                                            self.existingBreakPoints.append(content)
+                                        
+                                        self.text_widget.insert(tk.INSERT,content)
+                                        self.matchesfound+=1 #increment matches found
+                                #No entry in any field, display entire contents
+                                else:
                                     if content in list(self.breakpointsLineNum.keys()) and content not in self.existingBreakPoints:
-                                        startIndex=self.text_widget.index(tk.INSERT) #EXTRA
+                                        startIndex=self.text_widget.index(tk.INSERT)
                                         endIndex=startIndex.split(".")[0]+".end"
-                                        self.breakpointsLineNum[content]=[startIndex,endIndex] #UPTILL HERE FOR ALL
+                                        self.breakpointsLineNum[content]=[startIndex,endIndex]
                                         self.existingBreakPoints.append(content)
-                                    
                                     self.text_widget.insert(tk.INSERT,content)
-                                    self.matchesfound+=1 #increment matches found
-                            #No entry in any field, display entire contents
+                                    self.matchesfound+=1
                             else:
-                                if content in list(self.breakpointsLineNum.keys()) and content not in self.existingBreakPoints:
-                                    startIndex=self.text_widget.index(tk.INSERT)
-                                    endIndex=startIndex.split(".")[0]+".end"
-                                    self.breakpointsLineNum[content]=[startIndex,endIndex]
-                                    self.existingBreakPoints.append(content)
-                                self.text_widget.insert(tk.INSERT,content)
-                                self.matchesfound+=1
-                        else:
-                            #If content is not in default LOG line format, control come here
-                            #All fields should be empty except general search for this to execute
-                            if not pid and not tid and flagValue=="" and timeRecieved==False and self.checkSearchText(content,searchText_list):
-                                if content in list(self.breakpointsLineNum.keys()) and content not in self.existingBreakPoints:
-                                    startIndex=self.text_widget.index(tk.INSERT)
-                                    endIndex=startIndex.split(".")[0]+".end"
-                                    self.breakpointsLineNum[content]=[startIndex,endIndex]
-                                    self.existingBreakPoints.append(content)
-                                self.text_widget.insert(tk.INSERT,content)
-                                self.matchesfound+=1
+                                #If content is not in default LOG line format, control come here
+                                #All fields should be empty except general search for this to execute
+                                if not pid and not tid and flagValue=="" and timeRecieved==False and self.checkSearchText(content,searchText_list):
+                                    if content in list(self.breakpointsLineNum.keys()) and content not in self.existingBreakPoints:
+                                        startIndex=self.text_widget.index(tk.INSERT)
+                                        endIndex=startIndex.split(".")[0]+".end"
+                                        self.breakpointsLineNum[content]=[startIndex,endIndex]
+                                        self.existingBreakPoints.append(content)
+                                    self.text_widget.insert(tk.INSERT,content)
+                                    self.matchesfound+=1
+                if(self.file_extension=="gz"):
+                    with gzip.open(self.file_path, 'r') as f:
+                        while content_line:
+                            content_line=f.readline()
+                            content=str(content_line,encoding="ANSI",errors="replace")
+                            content_split=content.split()
+                            if(len(content_split)>4):
+                                temp = content.split(":") #split each entry
+                                content_split=[":".join(temp[0:3])] + temp[3:] # join first 3 elements of the list 
+                                content_split_first_part=content_split[0].split() #first part splitted 
+                                content_time=content_split_first_part[1] #time
+                                content_time_obj=datetime.strptime(content_time,time_to_check_format).time() #to validate the time 
+                                content_pid=content_split_first_part[2] #pid
+                                content_tid=content_split_first_part[3] #tid
+                                content_flagValue=content_split_first_part[4] #flag
+                                
+    
+                                #main search filter condition 
+                                if pid or tid or searchText or flagValue or timeRecieved:
+                                    if (not pid or content_pid in pid_list) and (not tid or content_tid in tid_list) and (self.checkSearchText(content,searchText_list)) and (content_flagValue==flagValue or flagValue=="")  and ((timestampFrom=="" and timestampTo=="") or (timestampFrom <= content_time_obj <= timestampTo) ):
+                                        if content in list(self.breakpointsLineNum.keys()) and content not in self.existingBreakPoints:
+                                            startIndex=self.text_widget.index(tk.INSERT) #EXTRA
+                                            endIndex=startIndex.split(".")[0]+".end"
+                                            self.breakpointsLineNum[content]=[startIndex,endIndex] #UPTILL HERE FOR ALL
+                                            self.existingBreakPoints.append(content)
+                                        
+                                        self.text_widget.insert(tk.INSERT,content)
+                                        self.matchesfound+=1 #increment matches found
+                                #No entry in any field, display entire contents
+                                else:
+                                    if content in list(self.breakpointsLineNum.keys()) and content not in self.existingBreakPoints:
+                                        startIndex=self.text_widget.index(tk.INSERT)
+                                        endIndex=startIndex.split(".")[0]+".end"
+                                        self.breakpointsLineNum[content]=[startIndex,endIndex]
+                                        self.existingBreakPoints.append(content)
+                                    self.text_widget.insert(tk.INSERT,content)
+                                    self.matchesfound+=1
+                            else:
+                                #If content is not in default LOG line format, control come here
+                                #All fields should be empty except general search for this to execute
+                                if not pid and not tid and flagValue=="" and timeRecieved==False and self.checkSearchText(content,searchText_list):
+                                    if content in list(self.breakpointsLineNum.keys())  and content not in self.existingBreakPoints:
+                                        startIndex=self.text_widget.index(tk.INSERT)
+                                        endIndex=startIndex.split(".")[0]+".end"
+                                        self.breakpointsLineNum[content]=[startIndex,endIndex]
+                                        self.existingBreakPoints.append(content)
+                                    self.text_widget.insert(tk.INSERT,content)
+                                    self.matchesfound+=1
             except(Exception):
                 messagebox.showerror("Error", "Some error occured")
         self.scrollbar.config(command=self.text_widget.yview) #adjust scroll bar as per the content size 

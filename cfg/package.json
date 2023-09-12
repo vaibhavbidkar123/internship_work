@@ -14,5 +14,7 @@
     "Network":
     [
         "NetworkSecurityConfig","NetworkPolicy","WifiManager"
-    ]
+    ],
+    "Power":["POWER_HB","CAR.POWER"]
+
 }

@@ -267,9 +267,8 @@ class RootClass:
     
     # selecting multiple files/tabs
     def add_multiple_tab(self,event):
-        files_name_list=filedialog.askopenfilenames(filetypes=[("Log Files","*.log")])
+        files_name_list=filedialog.askopenfilenames(filetypes=[("Log Files","*.log"),("Gz Files","*.gz")])
         for file_name in files_name_list:
-            print(file_name)
             new_tab=Tabs.Tab(self.notebook)
             RootClass.tabs_object.append(new_tab)
             new_tab.open_file(file_name)
