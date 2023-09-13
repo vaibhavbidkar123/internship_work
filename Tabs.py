@@ -239,7 +239,7 @@ class Tab:
                             content_line=f.readline()
                             content=str(content_line)
                             content_split=content.split()
-                            if(len(content_split)>4):
+                            if(len(content_split)>4 and re.match(Tab.logFormat, content)):
                                 temp = content.split(":") #split each entry
                                 content_split=[":".join(temp[0:3])] + temp[3:] # join first 3 elements of the list 
                                 content_split_first_part=content_split[0].split() #first part splitted 
@@ -289,7 +289,7 @@ class Tab:
                             content_line=f.readline()
                             content=str(content_line,encoding="ANSI",errors="replace")
                             content_split=content.split()
-                            if(len(content_split)>4):
+                            if(len(content_split)>4 and re.match(Tab.logFormat, content)):
                                 temp = content.split(":") #split each entry
                                 content_split=[":".join(temp[0:3])] + temp[3:] # join first 3 elements of the list 
                                 content_split_first_part=content_split[0].split() #first part splitted 

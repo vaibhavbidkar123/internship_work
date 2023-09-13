@@ -15,6 +15,7 @@
     [
         "NetworkSecurityConfig","NetworkPolicy","WifiManager"
     ],
-    "Power":["POWER_HB","CAR.POWER"]
+    "Power":["POWER_HB","CAR.POWER","[android.car.hvac.demo]:"]
+
 
 }
