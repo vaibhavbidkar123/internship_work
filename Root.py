@@ -8,7 +8,9 @@ import Tabs
 import json
 import os
 import cfg
+import ctypes
 
+ctypes.windll.shcore.SetProcessDpiAwareness(1)
 class RootClass:
     
     #static variables
@@ -28,6 +30,7 @@ class RootClass:
         self.root.config(menu=self.menubar)
         self.file_menu=tk.Menu(self.menubar,tearoff=0)
         self.package_menu=tk.Menu(self.menubar,tearoff=0)
+        self.help_menu=tk.Menu(self.menubar,tearoff=0)
         self.file_menu.add_command(label='Open File',command=lambda: self.add_tab(1),accelerator="Shift+O")
         self.file_menu.add_command(label='Open Multiple Files',command=lambda: self.add_multiple_tab(1),accelerator="Ctrl+Shift+O")
         self.file_menu.add_command(label='Delete Current Tab',command=lambda: self.delete_tab(1),accelerator="Shift+W")
@@ -36,8 +39,10 @@ class RootClass:
         self.file_menu.add_command(label='Exit',command=self.root.destroy)
         self.menubar.add_cascade(label="File",menu=self.file_menu)
         self.menubar.add_cascade(label="Packages",menu=self.package_menu)
+        self.menubar.add_cascade(label="Help",menu=self.help_menu)
         self.package_menu.add_command(label="Select Packages",command=lambda: self.select_package(1),accelerator="Shift+P")
         self.package_menu.add_command(label="Import Package File",command=self.import_package)
+        self.help_menu.add_command(label="User Manual",command=self.open_user_manual_window)
 
         #Initialize packages child window to None
         self.child_window=None
@@ -135,6 +140,41 @@ class RootClass:
             self.disable_binds()
 
         self.active_tab=None
+
+
+
+
+    def open_user_manual_window(self):
+
+        self.user_manual_window=tk.Toplevel(self.root)
+        self.user_manual_window.iconbitmap(cfg.icon_path)
+        self.user_manual_window.geometry("1000x600")
+        self.user_manual_window.title("User Manual")
+        self.user_manual_frame=tk.Frame(self.user_manual_window)
+        self.user_manual_frame.pack(expand=True, fill=tk.BOTH,pady=(20,0))
+        self.manual_widget=tk.Text(self.user_manual_frame)
+        self.manual_widget.pack(side=tk.LEFT,fill=tk.BOTH,expand=True)
+        self.user_manual_scrollbar=tk.Scrollbar(self.user_manual_frame)
+        self.user_manual_scrollbar.pack(expand=True, fill=tk.BOTH)
+        self.manual_widget.config(yscrollcommand=self.user_manual_scrollbar.set)
+        self.user_manual_scrollbar.config(command=self.manual_widget.yview)
+        self.close_manual_button=tk.Button(self.user_manual_window,text="Close",command=self.user_manual_window.destroy)
+        self.close_manual_button.pack(pady=20)
+
+
+        file_path = "cfg/help/help.txt" 
+
+        try:
+                with open(file_path, 'r') as file:
+                    content = file.read()
+                    self.manual_widget.delete(1.0, tk.END)
+                    self.manual_widget.insert(tk.END, content)
+        except FileNotFoundError:
+                self.manual_widget.delete(1.0, tk.END)
+                self.manual_widget.insert(tk.END, "File not found!")
+
+
+
 
     def select_package(self,event):
         #Disable binds to allow only one child window to spawn

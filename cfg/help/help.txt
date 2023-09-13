@@ -1,0 +1,62 @@
+hello world
+SetProcessDpiAwarenesss
+SS
+S
+S
+s 
+S 
+dhjsdhhsd
+           ^^^^^^^^^^^^^^^^
+  File "c:\Users\vbidkar\Desktop\LogEditorMultiTab\Root.py", line 154, in open_user_manual_window
+    self.user_manual_scrollbar=tk.Scrollbar(self.listbox_frame)
+                                            ^^^^^^^^^^^^^^^^^^
+AttributeError: 'RootClass' object has no attribute 'listbox_frame'
+PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
+PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
+PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
+PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> 
+           ^^^^^^^^^^^^^^^^
+  File "c:\Users\vbidkar\Desktop\LogEditorMultiTab\Root.py", line 154, in open_user_manual_window
+    self.user_manual_scrollbar=tk.Scrollbar(self.listbox_frame)
+                                            ^^^^^^^^^^^^^^^^^^
+AttributeError: 'RootClass' object has no attribute 'listbox_frame'
+PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
+PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
+PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
+PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> 
+           ^^^^^^^^^^^^^^^^
+  File "c:\Users\vbidkar\Desktop\LogEditorMultiTab\Root.py", line 154, in open_user_manual_window
+    self.user_manual_scrollbar=tk.Scrollbar(self.listbox_frame)
+                                            ^^^^^^^^^^^^^^^^^^
+AttributeError: 'RootClass' object has no attribute 'listbox_frame'
+PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
+PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
+PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
+PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> 
+           ^^^^^^^^^^^^^^^^
+  File "c:\Users\vbidkar\Desktop\LogEditorMultiTab\Root.py", line 154, in open_user_manual_window
+    self.user_manual_scrollbar=tk.Scrollbar(self.listbox_frame)
+                                            ^^^^^^^^^^^^^^^^^^
+AttributeError: 'RootClass' object has no attribute 'listbox_frame'
+PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
+PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
+PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
+PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> 
+           ^^^^^^^^^^^^^^^^
+  File "c:\Users\vbidkar\Desktop\LogEditorMultiTab\Root.py", line 154, in open_user_manual_window
+    self.user_manual_scrollbar=tk.Scrollbar(self.listbox_frame)
+                                            ^^^^^^^^^^^^^^^^^^
+AttributeError: 'RootClass' object has no attribute 'listbox_frame'
+PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
+PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
+PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
+PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> 
+           ^^^^^^^^^^^^^^^^
+  File "c:\Users\vbidkar\Desktop\LogEditorMultiTab\Root.py", line 154, in open_user_manual_window
+    self.user_manual_scrollbar=tk.Scrollbar(self.listbox_frame)
+                                            ^^^^^^^^^^^^^^^^^^
+AttributeError: 'RootClass' object has no attribute 'listbox_frame'
+PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
+PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
+PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
+PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> 
