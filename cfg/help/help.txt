@@ -1,62 +1,48 @@
-hello world
-SetProcessDpiAwarenesss
-SS
-S
-S
-s 
-S 
-dhjsdhhsd
-           ^^^^^^^^^^^^^^^^
-  File "c:\Users\vbidkar\Desktop\LogEditorMultiTab\Root.py", line 154, in open_user_manual_window
-    self.user_manual_scrollbar=tk.Scrollbar(self.listbox_frame)
-                                            ^^^^^^^^^^^^^^^^^^
-AttributeError: 'RootClass' object has no attribute 'listbox_frame'
-PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
-PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
-PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
-PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> 
-           ^^^^^^^^^^^^^^^^
-  File "c:\Users\vbidkar\Desktop\LogEditorMultiTab\Root.py", line 154, in open_user_manual_window
-    self.user_manual_scrollbar=tk.Scrollbar(self.listbox_frame)
-                                            ^^^^^^^^^^^^^^^^^^
-AttributeError: 'RootClass' object has no attribute 'listbox_frame'
-PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
-PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
-PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
-PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> 
-           ^^^^^^^^^^^^^^^^
-  File "c:\Users\vbidkar\Desktop\LogEditorMultiTab\Root.py", line 154, in open_user_manual_window
-    self.user_manual_scrollbar=tk.Scrollbar(self.listbox_frame)
-                                            ^^^^^^^^^^^^^^^^^^
-AttributeError: 'RootClass' object has no attribute 'listbox_frame'
-PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
-PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
-PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
-PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> 
-           ^^^^^^^^^^^^^^^^
-  File "c:\Users\vbidkar\Desktop\LogEditorMultiTab\Root.py", line 154, in open_user_manual_window
-    self.user_manual_scrollbar=tk.Scrollbar(self.listbox_frame)
-                                            ^^^^^^^^^^^^^^^^^^
-AttributeError: 'RootClass' object has no attribute 'listbox_frame'
-PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
-PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
-PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
-PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> 
-           ^^^^^^^^^^^^^^^^
-  File "c:\Users\vbidkar\Desktop\LogEditorMultiTab\Root.py", line 154, in open_user_manual_window
-    self.user_manual_scrollbar=tk.Scrollbar(self.listbox_frame)
-                                            ^^^^^^^^^^^^^^^^^^
-AttributeError: 'RootClass' object has no attribute 'listbox_frame'
-PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
-PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
-PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
-PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> 
-           ^^^^^^^^^^^^^^^^
-  File "c:\Users\vbidkar\Desktop\LogEditorMultiTab\Root.py", line 154, in open_user_manual_window
-    self.user_manual_scrollbar=tk.Scrollbar(self.listbox_frame)
-                                            ^^^^^^^^^^^^^^^^^^
-AttributeError: 'RootClass' object has no attribute 'listbox_frame'
-PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
-PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
-PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> & C:/Users/vbidkar/AppData/Local/Programs/Python/Python311/python.exe c:/Users/vbidkar/Desktop/LogEditorMultiTab/main.py
-PS C:\Users\vbidkar\Desktop\LogEditorMultiTab> 
+Opening a Single file 
+-User can open a log/gz file 
+-Shortcut Shift+O
+
+Opening multiple files
+-Shortcut ctrl+shift+O
+
+Deleting current tab opened
+-shortcut shift+w
+
+deleting all tabs 
+-shortcut ctrl+shift+w
+
+Search filters 
+-user can search for entries using multiple filter options 
+  1)general search : will display log entries which will contain the search text given in general search field 
+  2)Thread ID (TID): will display log entries which will have their TID as given in TID field
+  3)Process ID (PID): will display log entries which will have their PID as given in PID field
+  4)flags : will filterout the log based on the flag that user chooses from the flag dropdown
+  5)timestamp : filterout logs which come in between the range of the timestamp given by the user 
+
+NOTE : All the filters will work on the AND condition principle
+
+Multiple values in TID,PID,general search
+-By using a '|' separator u can include multiple entries in above mentioned fields 
+-This feature will work on OR condition principle
+
+search all
+-if user wants to filter based on the values given by him in the search field currently in all the opened tabs then he can simply press search all button
+
+adding/deleting Breakpoints
+-user can add a breakpoint or delete an existing breakpoint by simply selecting the line and pressing add/del breakpoint or pressing F1 
+-user can cycle through the breakpoints by pressing F2
+
+packages
+-user can include the packages in order to filterout more accurately (shortcut shift+p)
+-user can also edit the packages 
+
+clear all
+-clears all the fields and searches with empty entries
+
+reset
+-resets all the fields as well as breakpoints and packages imported 
+
+matchesfound
+-user can view the number of entries found per search at bottom left of the screen
+
+

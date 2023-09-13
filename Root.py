@@ -154,7 +154,7 @@ class RootClass:
 
         self.user_manual_frame=tk.Frame(self.user_manual_window)
         self.user_manual_frame.pack(expand=True, fill=tk.BOTH,pady=(20,0))
-        
+
         self.manual_widget=tk.Text(self.user_manual_frame)
         self.manual_widget.pack(side=tk.LEFT,fill=tk.BOTH,expand=True)
 
@@ -175,10 +175,12 @@ class RootClass:
                     content = file.read()
                     self.manual_widget.delete(1.0, tk.END)
                     self.manual_widget.insert(tk.END, content)
+                    self.manual_widget.config(state=tk.DISABLED)
+
         except FileNotFoundError:
                 self.manual_widget.delete(1.0, tk.END)
                 self.manual_widget.insert(tk.END, "File not found!")
-
+                self.manual_widget.config(state=tk.DISABLED)
 
 
 
