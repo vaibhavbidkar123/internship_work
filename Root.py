@@ -39,8 +39,10 @@ class RootClass:
         self.package_menu.add_command(label="Select Packages",command=lambda: self.select_package(1),accelerator="Shift+P")
         self.package_menu.add_command(label="Import Package File",command=self.import_package)
 
+        #Initialize packages child window to None
+        self.child_window=None
+
         #General Search Entry
-        
         self.general_search_frame = tk.Frame(self.root)
         self.general_search_label = tk.Label(self.general_search_frame,text="Search:")
         self.general_search_label.grid(row=0,column=0)
@@ -128,6 +130,7 @@ class RootClass:
         self.root.bind("<Shift-P>",self.select_package)
         self.root.bind("<Control-Shift-KeyPress-O>",self.add_multiple_tab)
 
+        #Disable all binds if no tab is present
         if(len(RootClass.tabs_object)==0):
             self.disable_binds()
 
@@ -199,7 +202,7 @@ class RootClass:
             os.startfile(package_path)
 
     #Gets packages that have been selected by the user
-    #Called when DONE is clicked
+    #Called when DONE is clicked from select_package
     def get_selected_package_value(self):
         cfg.user_selected_packages=[]
         selection=self.packages_listbox.curselection()
@@ -210,7 +213,7 @@ class RootClass:
     
     #Updates package status label below searchbar
     #Rebinds the disabled binds which were disabled when child window was spawned
-    #Called when DONE is pressed or CLOSE button is clicked.
+    #Called when DONE is pressed or CLOSE button is clicked from select_package
     def update_package_status(self):
         if cfg.user_selected_packages:
             self.package_status_label.config(text="Package Search is active.",foreground="forest green")
@@ -218,9 +221,11 @@ class RootClass:
             self.package_status_label.config(text="")
         self.package_menu.entryconfig("Select Packages",state="active")
         self.root.bind("<Shift-P>",self.select_package)
-        self.child_window.destroy()
+        if(self.child_window!=None): #Destroy called only when child window is present
+            self.child_window.destroy()
 
-        
+    #Used to move focus from Timestamp To to Timestamp From
+    #Called when Enter is pressed in Timestamp To entry.
     def go_to_next_element(self,event):
         event.widget.tk_focusNext().focus()
     
@@ -538,15 +543,15 @@ class RootClass:
     #To find the time format of timestampTo and timestampFrom
     #Called from search function
     def getTimeFormat(self,timeobject):
-        partsFrom=timeobject.split(".")
-        if(len(partsFrom)==1):
+        splitted_timeobject=timeobject.split(".")
+        if(len(splitted_timeobject)==1):
             time_format = '%H:%M:%S'
         else:
             time_format = '%H:%M:%S.%f'
         return time_format
     
 
-    #To add .999 to timestampTo field if HH:MM:SS format format
+    #To add .999 to timestampTo field if it is in HH:MM:SS format
     #Called from search function
     def addMilliseconds(self,timestampTo_obj):
         timestampTo_hour=timestampTo_obj.hour
