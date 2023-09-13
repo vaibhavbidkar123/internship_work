@@ -143,28 +143,34 @@ class RootClass:
 
 
 
-
+    # opens usuer manual
+    # called in menubar (user manual)
     def open_user_manual_window(self):
 
         self.user_manual_window=tk.Toplevel(self.root)
         self.user_manual_window.iconbitmap(cfg.icon_path)
         self.user_manual_window.geometry("1000x600")
         self.user_manual_window.title("User Manual")
+
         self.user_manual_frame=tk.Frame(self.user_manual_window)
         self.user_manual_frame.pack(expand=True, fill=tk.BOTH,pady=(20,0))
+        
         self.manual_widget=tk.Text(self.user_manual_frame)
         self.manual_widget.pack(side=tk.LEFT,fill=tk.BOTH,expand=True)
+
         self.user_manual_scrollbar=tk.Scrollbar(self.user_manual_frame)
         self.user_manual_scrollbar.pack(expand=True, fill=tk.BOTH)
         self.manual_widget.config(yscrollcommand=self.user_manual_scrollbar.set)
         self.user_manual_scrollbar.config(command=self.manual_widget.yview)
+
         self.close_manual_button=tk.Button(self.user_manual_window,text="Close",command=self.user_manual_window.destroy)
         self.close_manual_button.pack(pady=20)
 
 
-        file_path = "cfg/help/help.txt" 
+        file_path = "cfg/help/help.txt" # manual file path
 
-        try:
+        try:    
+                # opens user manual in text widget
                 with open(file_path, 'r') as file:
                     content = file.read()
                     self.manual_widget.delete(1.0, tk.END)
