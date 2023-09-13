@@ -1,48 +1,148 @@
-Opening a Single file 
--User can open a log/gz file 
--Shortcut Shift+O
-
-Opening multiple files
--Shortcut ctrl+shift+O
-
-Deleting current tab opened
--shortcut shift+w
-
-deleting all tabs 
--shortcut ctrl+shift+w
-
-Search filters 
--user can search for entries using multiple filter options 
-  1)general search : will display log entries which will contain the search text given in general search field 
-  2)Thread ID (TID): will display log entries which will have their TID as given in TID field
-  3)Process ID (PID): will display log entries which will have their PID as given in PID field
-  4)flags : will filterout the log based on the flag that user chooses from the flag dropdown
-  5)timestamp : filterout logs which come in between the range of the timestamp given by the user 
-
-NOTE : All the filters will work on the AND condition principle
-
-Multiple values in TID,PID,general search
--By using a '|' separator u can include multiple entries in above mentioned fields 
--This feature will work on OR condition principle
-
-search all
--if user wants to filter based on the values given by him in the search field currently in all the opened tabs then he can simply press search all button
-
-adding/deleting Breakpoints
--user can add a breakpoint or delete an existing breakpoint by simply selecting the line and pressing add/del breakpoint or pressing F1 
--user can cycle through the breakpoints by pressing F2
-
-packages
--user can include the packages in order to filterout more accurately (shortcut shift+p)
--user can also edit the packages 
-
-clear all
--clears all the fields and searches with empty entries
-
-reset
--resets all the fields as well as breakpoints and packages imported 
-
-matchesfound
--user can view the number of entries found per search at bottom left of the screen
+*****USER MANUAL*****
 
 
+Visteon Log File Viewer
+
+
+--TABLE OF CONTENTS--
+1) Introduction
+2) System Requirements
+3) Getting Started
+  3.1) Installation
+  3.2) Launching the software
+4) User Interface Overview
+  4.1) Menus
+  4.2) Text Entry Fields
+  4.3) Dropdown
+  4.4) Buttons
+5) Log File Management
+  5.1) File Formats
+  5.2) Opening a file
+  5.3) Closing a file
+6) Search
+  6.1) Search Filters
+  6.2) Multiple Value Search
+  6.3) Search All
+  6.4) Matches Found
+7) Breakpoints
+  7.1) Adding/Deleting Breakpoints
+  7.2) Cycling Through Breakpoints
+8) Packages
+  8.1) Selecting Packages
+  8.2) Importing Packages
+  8.3) Package Entry Format
+9) Clear All/Reset
+  9.1) Clear All
+  9.2) Reset
+10) All Shortcuts
+---------------------
+
+
+1. INTRODUCTION
+  Welcome to the User Manual for Visteon Log File Viewer, a powerful tool designed to help you efficiently view and analyze log files. This manual has been created to guide you through the process of using our software effectively, enlisting all the features present in the application.
+
+
+2. SYSTEM REQUIREMENTS
+  OS: Windows 10 or later
+  Apart from OS, the software doesn't have any external dependencies. It is a lightweight application that runs on most of the machines.
+
+
+3. GETTING STARTED
+  3.1 Installation
+      The software can be installed by using the setup file of the application. While installing, select the directory where you want the software to be located. If you want a quick access to the software, create its shortcut on the desktop.
+
+  3.2 Launching the software
+      The software can be launched directly by either opening its shortcut file or by opening the logviewer.exe file in the installation directory.
+
+
+4. USER INTERFACE OVERVIEW
+  4.1 Menus
+      The software has various menu bars such as File, Package, Help.
+
+  4.2 Text Entry Fields
+      There are various text entry fields in the main UI for General Search, PID search, TID search, Timestamp search.
+
+  4.3 Dropdown
+      The software has a dropdown for flag selection.
+
+  4.4 Buttons
+      There are buttons available for search in file, search all, clear all,reset.
+
+
+5. LOG FILE MANAGEMENT
+  5.1 File Formats
+      The log viewer currently supports files with .log and .gz zip files having a single .log file in them.
+
+  5.2 Opening a file
+      A single file can be opened by navigating to the File Menu and selecting the 'Open File' option. The shortcut for the same is Shift+O.
+      Multiple files can be opened at the same time navigating to the File Menu and selecting the 'Open Multiple Files' option. The shortcut for the same is Ctrl+Shift+O.
+
+  5.3 Closing a file
+      A file can be closed by selecting the tab and navigating to the File Menu and selecting the 'Delete Current Tab' option. The shortcut for the same is Shift+W.
+      All files can be closed at the same time by navigating to the File Menu and selecting the 'Delete All Tabs' option. The shortcut for the same is Ctrl+Shift+W.
+
+
+6. SEARCH
+  6.1 Search Filters
+      User can search for a log file with several filters such as:
+      1)General Search : It will display log entries which contains the search text given in general search field. 
+      2)Thread ID (TID): It will display log entries whose TID is the same as that of the TID field.
+      3)Process ID (PID): It will display log entries whose PID is the same as that of the PID field.
+      4)Flags : It will filter the log entries based on the flag that user chooses from the flag dropdown. Available options are VERBOSE, DEBUG, INFO,  WARN, ERROR, FATAL.
+      5)Timestamp : It wil filter the log entries which lie in the time range spicified by the user in Timestamp From and Timestamp To fields.
+      NOTE: All the filters will work on the AND condition.
+
+  6.2 Multiple Value Search
+      The user can search for multiple TID,PID or multiple general search keywords by using the '|' seperator.
+      This feature will work on the OR condition.
+
+  6.3 Search All
+      If the user wants to filter all the files based on the conditions specified by them, they can press the 'Search All' button.
+  
+  6.4 Matches Found
+      The user can view the number of entries found per search at bottom left of the screen.
+
+
+7. BREAKPOINTS
+  The breakpoint feature is used to mark a particular log line in the file.
+
+  7.1 Adding/Deleting Breakpoints
+      The user can add or delete breakpoints by selecting a log line and pressing the 'Add/Del Breakpoint' button or by using the shortcut F1. This helps the user to locate a particular log search in the main log file and determine the flow of the log.
+
+  7.2 Cycling Through Breakpoints
+      To cycle through the breakpoints specified by the user, the shortcut F2 has to be used. This will cycle through all the breakpoints in the selected log file
+
+
+8. PACKAGES
+  The packages feature allows the user to load several pre-defined search keywords into the search criteria.
+  Example: [DISPLAY] package might have several keywords related to the Display module which the user might not be aware of.
+  All the packages are located in the cfg/packages.json file.
+  A default packages.json file is provided with some default keywords and their respectve values.
+
+  8.1 Selecting Packages
+      The user can select several packages by navigating to the Packages Menu and selecting the 'Select Packages' option. The user is then presented with a child window with all the available packages that are imported from the packages.json file. Once atleast one package file is selected, the 'Package Search is active.' label pops up below the search bar to alert the user that package search feature is active.
+  
+  8.2 Importing Packages
+      The user can replace the default packages.json file with a file that has keywords of their choice. To do this, either navigate to the /cfg directory or click the 'Import Packages' option from the Packages Menu. The user is then led to the /cfg directory where they can replace the packages.json file. Once replacing is done, it is necessary to restart the application to import correct packages.
+  
+  8.3 Package Entry Format
+      The format for a package is:
+      "PACKAGE_KEY" : ["VALUE1","VALUE2","VALUEN"]
+      The package is located in the packages.json file.
+
+
+9. CLEAR ALL/RESET
+  9.1 Clear All
+      The 'Clear All' button clears all the input fields and performs a search with empty entries in the current file. This displays the original contents of the file.
+
+  9.2 Reset
+      The 'Reset' button clears all the input fields along with the breakpoints and packages selected by the user.
+  
+10. ALL SHORTCUTS
+  SHIFT+O - Open a file
+  CTRL+SHIFT+O - Open multiple files
+  SHIFT+W - Delete current tab
+  CTRL+SHIFT+W - Delete all tabs
+  SHIFT+P - Select packages
+  F1 - Add/Delete a breakpoint
+  F2 - Cycle through breakpoints

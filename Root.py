@@ -8,9 +8,7 @@ import Tabs
 import json
 import os
 import cfg
-import ctypes
 
-ctypes.windll.shcore.SetProcessDpiAwareness(1)
 class RootClass:
     
     #static variables
@@ -143,8 +141,8 @@ class RootClass:
 
 
 
-    # opens usuer manual
-    # called in menubar (user manual)
+    # opens user manual
+    # Called from menubar (user manual)
     def open_user_manual_window(self):
 
         self.user_manual_window=tk.Toplevel(self.root)
@@ -166,12 +164,12 @@ class RootClass:
         self.close_manual_button=tk.Button(self.user_manual_window,text="Close",command=self.user_manual_window.destroy)
         self.close_manual_button.pack(pady=20)
 
-
-        file_path = "cfg/help/help.txt" # manual file path
+        user_manual_relative_path="cfg/help/help.txt"
+        user_manual_path=os.path.normpath(os.path.join(cfg.absolute_path, user_manual_relative_path))
 
         try:    
                 # opens user manual in text widget
-                with open(file_path, 'r') as file:
+                with open(user_manual_path, 'r') as file:
                     content = file.read()
                     self.manual_widget.delete(1.0, tk.END)
                     self.manual_widget.insert(tk.END, content)
@@ -179,7 +177,7 @@ class RootClass:
 
         except FileNotFoundError:
                 self.manual_widget.delete(1.0, tk.END)
-                self.manual_widget.insert(tk.END, "File not found!")
+                self.manual_widget.insert(tk.END, "User Manual not found!")
                 self.manual_widget.config(state=tk.DISABLED)
 
 
