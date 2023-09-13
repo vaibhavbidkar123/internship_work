@@ -10,7 +10,8 @@ import Root
 
 class Tab:
 
-    logFormat= r'^(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]).*\n$' #regular expression for breakpoint
+    logFormatBreakpoint= r'^(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]).*\n$' #regular expression for breakpoint
+    logFormatSearch= r'^\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}\.\d{3}\s+\d+\s+\d+\s+[A-Za-z]\s+.*\n$' #regular expression for search
 
     def __init__(self,new_tab_object):
 
@@ -116,7 +117,7 @@ class Tab:
             newlineChars=text.count("\n")
             if(newlineChars>1):
                 raise Exception
-            if not re.match(Tab.logFormat, text):
+            if not re.match(Tab.logFormatBreakpoint, text):
                 raise Exception
             count=self.text_widget.count("1.0",tk.SEL_FIRST,"lines")
         except(Exception):
@@ -214,20 +215,19 @@ class Tab:
     def general_search(self,searchText,pid,tid,flagValue,timestampFrom,timestampTo):
         self.breakpointCursor=0 #breakpoint cursor set to zero
         self.existingBreakPoints=[] #breakpoint list is empty initially
-        self.matchesfound=0  
-        self.text_widget.config(state=tk.NORMAL)
-        self.text_widget.delete("1.0",tk.END)
+        self.matchesfound=0  #reset matchesfound to 0
+        self.text_widget.config(state=tk.NORMAL) #set text widget to edit mode
+        self.text_widget.delete("1.0",tk.END) #delete all previous contents of text widget
         timeRecieved=False #time is not recieved 
         time_to_check_format='%H:%M:%S.%f'  #time format to check 
         #if empty time recieved then set the timerecieved to true
         if(timestampFrom!="" and timestampTo!=""):
             timeRecieved=True
-        #sanitize general search for piping (or condition)
-        searchText=self.appendPackagesToSearchText(searchText)    
-        searchText_list=self.sanitizeOrString(searchText)
+        searchText=self.appendPackagesToSearchText(searchText)  #add packages selected by user to searchtext  
+        searchText_list=self.sanitizeOrString(searchText) #sanitize general search for piping (or condition)
         pid_list=self.sanitizeOrString(pid) #sanitize pid list
         tid_list=self.sanitizeOrString(tid) #sanitize tid list
-        content_line=True
+        content_line=True #read until EOF
         if(self.file_path==""):
             pass
         else:
@@ -238,8 +238,7 @@ class Tab:
                         while content_line:
                             content_line=f.readline()
                             content=str(content_line)
-                            content_split=content.split()
-                            if(len(content_split)>4):
+                            if(re.match(Tab.logFormatSearch, content)):
                                 temp = content.split(":") #split each entry
                                 content_split=[":".join(temp[0:3])] + temp[3:] # join first 3 elements of the list 
                                 content_split_first_part=content_split[0].split() #first part splitted 
@@ -288,8 +287,7 @@ class Tab:
                         while content_line:
                             content_line=f.readline()
                             content=str(content_line,encoding="ANSI",errors="replace")
-                            content_split=content.split()
-                            if(len(content_split)>4):
+                            if(re.match(Tab.logFormatSearch, content)):
                                 temp = content.split(":") #split each entry
                                 content_split=[":".join(temp[0:3])] + temp[3:] # join first 3 elements of the list 
                                 content_split_first_part=content_split[0].split() #first part splitted 
