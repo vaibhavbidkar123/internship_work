@@ -183,39 +183,15 @@ class RootClass:
 
 
     def select_package(self,event):
+
+        #Used to check for any erorrs in json parsing
+        error_flag=0
+
         #Disable binds to allow only one child window to spawn
         self.package_menu.entryconfig("Select Packages",state="disabled")
         self.root.unbind('<Shift-P>')
         relative_path_package="cfg\package.json"    #Path of the .json file
         package_path=os.path.normpath(os.path.join(cfg.absolute_path, relative_path_package)) #Path of package file joined with absolute path
-        
-        #Child window spawned
-        self.child_window=tk.Toplevel(self.root)
-        self.child_window.iconbitmap(cfg.icon_path)
-        self.child_window.protocol("WM_DELETE_WINDOW",self.update_package_status)
-        self.child_window.geometry("400x400")
-        self.child_window.resizable(True,False)
-        self.child_window.title("Packages")
-        self.child_window_label=tk.Label(self.child_window,text="Select Packages",font=("Arial",8,"bold"))
-        self.child_window_label.pack(side=tk.TOP,pady=10)
-
-        #Listbox frame
-        self.listbox_frame=tk.Frame(self.child_window)
-        self.listbox_frame.pack(side=tk.TOP)
-
-        #Listbox of user packages
-        self.packages_listbox=tk.Listbox(self.listbox_frame,selectmode="multiple",height=14,width=25)
-        self.packages_listbox.pack(side=tk.LEFT,fill=tk.BOTH,expand=True)
-
-        #Scrollbar for listbox
-        self.child_window_scrollbar=tk.Scrollbar(self.listbox_frame)
-        self.child_window_scrollbar.pack(expand=True, fill=tk.BOTH)
-        self.packages_listbox.config(yscrollcommand=self.child_window_scrollbar.set)
-        self.child_window_scrollbar.config(command=self.packages_listbox.yview)
-
-        #Done button
-        self.select_button=tk.Button(self.child_window,text="Done",command=self.get_selected_package_value)
-        self.select_button.pack(side=tk.TOP,pady=10)
 
         #Load the packages.json file to packages listbox
         try:
@@ -224,19 +200,52 @@ class RootClass:
                     cfg.user_package=json.load(f)
                 except(Exception):
                     messagebox.showerror("Error","Package file error.\n(Please check the package file)")
+                    error_flag=1
+                    self.update_package_status()
         except(Exception):
             messagebox.showerror("Error","Package file error.\n(Please check the package file)")
-        
-        #List of keys from the json file
-        cfg.user_package_keys=[key for key in list(cfg.user_package.keys())]
+            error_flag=1
+            self.update_package_status()
+            
+        if(error_flag==0):
+            #Child window spawned
+            self.child_window=tk.Toplevel(self.root)
+            self.child_window.iconbitmap(cfg.icon_path)
+            self.child_window.protocol("WM_DELETE_WINDOW",self.update_package_status)
+            self.child_window.geometry("400x400")
+            self.child_window.resizable(True,False)
+            self.child_window.title("Packages")
+            self.child_window_label=tk.Label(self.child_window,text="Select Packages",font=("Arial",8,"bold"))
+            self.child_window_label.pack(side=tk.TOP,pady=10)
 
-        #Put the keys into the packages listbox
-        for index in range(len(cfg.user_package_keys)):
-            self.packages_listbox.insert(tk.END,cfg.user_package_keys[index])
+            #Listbox frame
+            self.listbox_frame=tk.Frame(self.child_window)
+            self.listbox_frame.pack(side=tk.TOP)
 
-        #Reload previous selection of packages(history)
-        for index in cfg.user_package_selected_indices:
-            self.packages_listbox.selection_set(index)
+            #Listbox of user packages
+            self.packages_listbox=tk.Listbox(self.listbox_frame,selectmode="multiple",height=14,width=25)
+            self.packages_listbox.pack(side=tk.LEFT,fill=tk.BOTH,expand=True)
+
+            #Scrollbar for listbox
+            self.child_window_scrollbar=tk.Scrollbar(self.listbox_frame)
+            self.child_window_scrollbar.pack(expand=True, fill=tk.BOTH)
+            self.packages_listbox.config(yscrollcommand=self.child_window_scrollbar.set)
+            self.child_window_scrollbar.config(command=self.packages_listbox.yview)
+
+            #Done button
+            self.select_button=tk.Button(self.child_window,text="Done",command=self.get_selected_package_value)
+            self.select_button.pack(side=tk.TOP,pady=10)
+
+            #List of keys from the json file
+            cfg.user_package_keys=[key for key in list(cfg.user_package.keys())]
+
+            #Put the keys into the packages listbox
+            for index in range(len(cfg.user_package_keys)):
+                self.packages_listbox.insert(tk.END,cfg.user_package_keys[index])
+
+            #Reload previous selection of packages(history)
+            for index in cfg.user_package_selected_indices:
+                self.packages_listbox.selection_set(index)
     
     #Opens the folder directory to import cfg file
     #Called when import package is clicked
