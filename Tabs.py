@@ -10,7 +10,7 @@ import Root
 
 class Tab:
 
-    logFormatBreakpoint= r'^(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]).*\n$' #regular expression for breakpoint
+    logFormatBreakpoint= r'^.*\n$' #regular expression for breakpoint
     logFormatSearch= r'^\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}\.\d{3}\s+\d+\s+\d+\s+[A-Za-z]\s+.*\n$' #regular expression for search
 
     def __init__(self,new_tab_object):
@@ -29,7 +29,7 @@ class Tab:
         self.breakpointCursor=0
         self.breakpoints=[]
         self.breakpointsLineNum={}
-        self.existingBreakPoints=[]
+        self.existingBreakPoints=set()
         self.text_widget.tag_config("breakpointadd", foreground="red")
         self.text_widget.tag_config("breakpointremove", foreground="black")
         
@@ -42,6 +42,11 @@ class Tab:
         self.matchesfound=0
         self.matchesfound_label=tk.Label(self.tab_frame,text="")
         self.matchesfound_label.pack(side=tk.LEFT,)
+
+        self.breakpointsfound=0
+        self.breakpointsfound_label=tk.Label(self.tab_frame,text="")
+        self.breakpointsfound_label.pack(side=tk.RIGHT,padx=(0,16))
+
         
         # scrollbar 
         self.scrollbar=tk.Scrollbar(self.text_widget_frame,orient='vertical')
@@ -108,7 +113,7 @@ class Tab:
         self.general_search(general_search_string,pid,tid,flagValue,timestamp_from_obj,timestamp_to_obj)
 
     #To add breakpoint in selected file
-    #Called from Root (call_add_del_breakpoint)
+    #Called from Root (call_add_breakpoint)
     def addBreakpoint(self,event):
         #TRY-CATCH for getting the selection
         try:
@@ -123,6 +128,7 @@ class Tab:
         except(Exception):
             messagebox.showerror("Error", "Invalid breakpoint selection\n(You can only add a log line as a breakpoint.)")
             return
+        
         #TRY-CATCH for getting the line number
         #This logic is used to increment line number by one.
         #By default, line number starts from zero, but we need it from 1 onwards.
@@ -139,21 +145,58 @@ class Tab:
         try:
             lineNumStart=str(lineNum)+".0"
             lineNumEnd=str(lineNum)+".end"
-            #Delete breakpoint if it already exists and reset formatting
-            if(text in list(self.breakpointsLineNum.keys())):
-                del self.breakpointsLineNum[text]     
-                self.existingBreakPoints.remove(text)       
-                self.text_widget.tag_add("breakpointremove", lineNumStart, lineNumEnd)
-            #Else add the breakpoint
-            #Storing into breakpointlinenum dictionary KEY:the log entry VALUE:the start and end
+            if text not in self.breakpointsLineNum: #Adding a new breakpoint 
+                self.breakpointsLineNum[text]=[[lineNumStart,lineNumEnd]]
+                self.existingBreakPoints.add(text)     
             else:
-                self.breakpointsLineNum[text]=[lineNumStart,lineNumEnd]
-                self.existingBreakPoints.append(text)
-                #Change the particular line number's colour to red
-                self.text_widget.tag_remove("breakpointremove",lineNumStart, lineNumEnd)
-                self.text_widget.tag_add("breakpointadd", lineNumStart, lineNumEnd)
+                if [lineNumStart,lineNumEnd] not in self.breakpointsLineNum[text]: #To prevent duplication of same breakpoint line when appending
+                    self.breakpointsLineNum[text].append([lineNumStart,lineNumEnd])
+            #Change the particular line number's colour to red
+            self.text_widget.tag_remove("breakpointremove",lineNumStart, lineNumEnd)
+            self.text_widget.tag_add("breakpointadd", lineNumStart, lineNumEnd)
         except(Exception):
             pass
+
+    #To delete breakpoint in selected file
+    #Called from Root (call_del_breakpoint)
+    def delBreakpoint(self,event):
+        try:
+            #Get selection and find its line number
+            text=self.text_widget.selection_get()
+            newlineChars=text.count("\n")
+            if(newlineChars>1):
+                raise Exception
+            if not re.match(Tab.logFormatBreakpoint, text):
+                raise Exception
+            count=self.text_widget.count("1.0",tk.SEL_FIRST,"lines")
+        except(Exception):
+            messagebox.showerror("Error", "Invalid breakpoint selection.\n(You can only add a single line as a breakpoint.)")
+            return
+        
+        #TRY-CATCH for getting the line number
+        #This logic is used to increment line number by one.
+        #By default, line number starts from zero, but we need it from 1 onwards.
+        try:
+            lineNum=count[0]
+        except(Exception):
+            lineNum=None
+        if(lineNum==None):
+            lineNum=1
+        else:
+            lineNum+=1
+
+        try:
+            lineNumStart=str(lineNum)+".0"
+            lineNumEnd=str(lineNum)+".end"
+            if text in self.breakpointsLineNum:
+                del self.breakpointsLineNum[text]     
+                self.existingBreakPoints.remove(text)
+                self.text_widget.tag_add("breakpointremove", lineNumStart, lineNumEnd)
+            else:
+                messagebox.showerror("Error", "Current selection is not a breakpoint.\n(You can only remove a previously added breakpoint.)")
+        except(Exception):
+            pass     
+
     
     #Cycles through breakpoints when F2 is pressed.
     #Called from Root (call_F2Bind)
@@ -162,10 +205,11 @@ class Tab:
         #try catch since exception is generated if you try to access empty list element
         try:
             listOfValues=[] #existing line numbers in current search state
-            for item in self.existingBreakPoints:
-                listOfValues.append(self.breakpointsLineNum[item])
-            listOfValues.sort(key=lambda element: float(element[0])) #SORT the list based on line number order.
-            currentElementToDisplay=listOfValues[self.breakpointCursor][0] #Select the index from list based on breakpointcursor
+            for breakpoint in self.existingBreakPoints:
+                for list_item in self.breakpointsLineNum[breakpoint]:
+                    listOfValues.append(float(list_item[0]))
+            listOfValues.sort() #SORT the list based on line number order.
+            currentElementToDisplay=listOfValues[self.breakpointCursor] #Select the index from list based on breakpointcursor
             self.text_widget.see(currentElementToDisplay) #Scroll to the breakpoint index
             self.breakpointCursor+=1 #Set breakpoint cursor to point to next element
             if(self.breakpointCursor==len(listOfValues)):
@@ -211,11 +255,13 @@ class Tab:
         return newsearchtext
 
     
-                    #--MAIN SEARCH ALGORITHM--#
+                            #--MAIN SEARCH ALGORITHM--#
     def general_search(self,searchText,pid,tid,flagValue,timestampFrom,timestampTo):
         self.breakpointCursor=0 #breakpoint cursor set to zero
-        self.existingBreakPoints=[] #breakpoint list is empty initially
+        self.existingBreakPoints=set() #breakpoint set is empty initially
         self.matchesfound=0  #reset matchesfound to 0
+        self.breakpointsfound=0
+        self.breakpointsLineNum= {k : [] for k in self.breakpointsLineNum}
         self.text_widget.config(state=tk.NORMAL) #set text widget to edit mode
         self.text_widget.delete("1.0",tk.END) #delete all previous contents of text widget
         timeRecieved=False #time is not recieved 
@@ -252,32 +298,37 @@ class Tab:
                                 #main search filter condition 
                                 if pid or tid or searchText or flagValue or timeRecieved:
                                     if (not pid or content_pid in pid_list) and (not tid or content_tid in tid_list) and (self.checkSearchText(content,searchText_list)) and (content_flagValue==flagValue or flagValue=="")  and ((timestampFrom=="" and timestampTo=="") or (timestampFrom <= content_time_obj <= timestampTo) ):
-                                        if content in list(self.breakpointsLineNum.keys()) and content not in self.existingBreakPoints:
-                                            startIndex=self.text_widget.index(tk.INSERT) #EXTRA
+                                        if content in list(self.breakpointsLineNum.keys()): #Remap line number
+                                            self.breakpointsfound+=1
+                                            startIndex=self.text_widget.index(tk.INSERT)
                                             endIndex=startIndex.split(".")[0]+".end"
-                                            self.breakpointsLineNum[content]=[startIndex,endIndex] #UPTILL HERE FOR ALL
-                                            self.existingBreakPoints.append(content)
+                                            self.breakpointsLineNum[content].append([startIndex,endIndex])
+                                            self.existingBreakPoints.add(content)
                                         
                                         self.text_widget.insert(tk.INSERT,content)
                                         self.matchesfound+=1 #increment matches found
                                 #No entry in any field, display entire contents
                                 else:
-                                    if content in list(self.breakpointsLineNum.keys()) and content not in self.existingBreakPoints:
+                                    if content in list(self.breakpointsLineNum.keys()):
+                                        self.breakpointsfound+=1
                                         startIndex=self.text_widget.index(tk.INSERT)
                                         endIndex=startIndex.split(".")[0]+".end"
-                                        self.breakpointsLineNum[content]=[startIndex,endIndex]
-                                        self.existingBreakPoints.append(content)
+                                        self.breakpointsLineNum[content].append([startIndex,endIndex])
+                                        self.existingBreakPoints.add(content)
+
                                     self.text_widget.insert(tk.INSERT,content)
                                     self.matchesfound+=1
                             else:
                                 #If content is not in default LOG line format, control come here
                                 #All fields should be empty except general search for this to execute
                                 if not pid and not tid and flagValue=="" and timeRecieved==False and self.checkSearchText(content,searchText_list):
-                                    if content in list(self.breakpointsLineNum.keys()) and content not in self.existingBreakPoints:
+                                    if content in list(self.breakpointsLineNum.keys()):
+                                        self.breakpointsfound+=1
                                         startIndex=self.text_widget.index(tk.INSERT)
                                         endIndex=startIndex.split(".")[0]+".end"
-                                        self.breakpointsLineNum[content]=[startIndex,endIndex]
-                                        self.existingBreakPoints.append(content)
+                                        self.breakpointsLineNum[content].append([startIndex,endIndex])
+                                        self.existingBreakPoints.add(content)
+
                                     self.text_widget.insert(tk.INSERT,content)
                                     self.matchesfound+=1
                                     
@@ -301,41 +352,48 @@ class Tab:
                                 #main search filter condition 
                                 if pid or tid or searchText or flagValue or timeRecieved:
                                     if (not pid or content_pid in pid_list) and (not tid or content_tid in tid_list) and (self.checkSearchText(content,searchText_list)) and (content_flagValue==flagValue or flagValue=="")  and ((timestampFrom=="" and timestampTo=="") or (timestampFrom <= content_time_obj <= timestampTo) ):
-                                        if content in list(self.breakpointsLineNum.keys()) and content not in self.existingBreakPoints:
-                                            startIndex=self.text_widget.index(tk.INSERT) #EXTRA
+                                        if content in list(self.breakpointsLineNum.keys()):
+                                            self.breakpointsfound+=1
+                                            startIndex=self.text_widget.index(tk.INSERT)
                                             endIndex=startIndex.split(".")[0]+".end"
-                                            self.breakpointsLineNum[content]=[startIndex,endIndex] #UPTILL HERE FOR ALL
-                                            self.existingBreakPoints.append(content)
+                                            self.breakpointsLineNum[content].append([startIndex,endIndex])
+                                            self.existingBreakPoints.add(content)
                                         
                                         self.text_widget.insert(tk.INSERT,content)
                                         self.matchesfound+=1 #increment matches found
                                 #No entry in any field, display entire contents
                                 else:
-                                    if content in list(self.breakpointsLineNum.keys()) and content not in self.existingBreakPoints:
+                                    if content in list(self.breakpointsLineNum.keys()):
+                                        self.breakpointsfound+=1
                                         startIndex=self.text_widget.index(tk.INSERT)
                                         endIndex=startIndex.split(".")[0]+".end"
-                                        self.breakpointsLineNum[content]=[startIndex,endIndex]
-                                        self.existingBreakPoints.append(content)
+                                        self.breakpointsLineNum[content].append([startIndex,endIndex])
+                                        self.existingBreakPoints.add(content)
+
                                     self.text_widget.insert(tk.INSERT,content)
                                     self.matchesfound+=1
                             else:
                                 #If content is not in default LOG line format, control come here
                                 #All fields should be empty except general search for this to execute
                                 if not pid and not tid and flagValue=="" and timeRecieved==False and self.checkSearchText(content,searchText_list):
-                                    if content in list(self.breakpointsLineNum.keys())  and content not in self.existingBreakPoints:
+                                    if content in list(self.breakpointsLineNum.keys()):
+                                        self.breakpointsfound+=1
                                         startIndex=self.text_widget.index(tk.INSERT)
                                         endIndex=startIndex.split(".")[0]+".end"
-                                        self.breakpointsLineNum[content]=[startIndex,endIndex]
-                                        self.existingBreakPoints.append(content)
+                                        self.breakpointsLineNum[content].append([startIndex,endIndex])
+                                        self.existingBreakPoints.add(content)
+
                                     self.text_widget.insert(tk.INSERT,content)
                                     self.matchesfound+=1
             except(Exception):
                 messagebox.showerror("Error", "Some error occured")
         self.scrollbar.config(command=self.text_widget.yview) #adjust scroll bar as per the content size 
         self.text_widget.config(state=tk.DISABLED,yscroll=self.scrollbar.set)
-        self.matchesfound_label.config(text="Entries found: "+str(self.matchesfound)) # print matches found 
+        self.matchesfound_label.config(text="Entries found: "+str(self.matchesfound)) # print matches found
+        self.breakpointsfound_label.config(text="Breakpoints found: "+str(self.breakpointsfound)) # print matches found
         #To add colour to the line
-        for element in self.existingBreakPoints:
-            startIndex=self.breakpointsLineNum[element][0]
-            endIndex=self.breakpointsLineNum[element][1]
-            self.text_widget.tag_add("breakpointadd", startIndex,endIndex)
+        for breakpoint in self.existingBreakPoints:
+                for list_item in self.breakpointsLineNum[breakpoint]:
+                    startIndex=list_item[0]
+                    endIndex=list_item[1]
+                    self.text_widget.tag_add("breakpointadd", startIndex,endIndex)

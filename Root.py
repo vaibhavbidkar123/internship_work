@@ -64,8 +64,14 @@ class RootClass:
         self.pid_frame.grid(row=1, column=2, pady=(5, 15), sticky="w")
 
         #Breakpoint button
-        self.breakpoint_button = tk.Button(self.root, text="Add/Del Breakpoint",command=lambda: self.call_add_del_breakpoint(1))
-        self.breakpoint_button.grid(row=0, column=2, sticky="w")
+        self.breakpoint_frame=tk.Frame(self.root)
+        self.breakpoint_frame.grid(row=0, column=2, sticky="w")
+        self.breakpoint_frame_label=tk.Label(self.breakpoint_frame,text="Breakpoint")
+        self.breakpoint_frame_label.pack(side=tk.TOP,padx=(25,0))
+        self.add_breakpoint_button = tk.Button(self.breakpoint_frame, text="Insert",command=lambda: self.call_add_breakpoint(1))
+        self.add_breakpoint_button.pack(side=tk.LEFT,padx=(30,70))
+        self.del_breakpoint_button = tk.Button(self.breakpoint_frame, text="Delete",command=lambda: self.call_del_breakpoint(1))
+        self.del_breakpoint_button.pack(side=tk.RIGHT)
 
         #TID entry
         self.tid_frame = tk.Frame(self.root)
@@ -294,7 +300,8 @@ class RootClass:
         self.timestamp_from_entry.unbind('<Return>')
         self.timestamp_to_entry.unbind('<Return>')
         self.root.unbind("<F2>")
-        self.root.unbind("<F1>")
+        self.root.unbind("<F3>")
+        self.root.unbind("<F4>")
         #Disable all buttons
         self.search_button.config(state="disabled")
         self.search_all_button.config(state="disabled")
@@ -302,7 +309,8 @@ class RootClass:
         self.drop.config(state="disabled")
         self.clear_button.config(state="disabled")
         self.reset_button.config(state="disabled")
-        self.breakpoint_button.config(state="disabled")
+        self.add_breakpoint_button.config(state="disabled")
+        self.del_breakpoint_button.config(state="disabled")
         self.file_menu.entryconfig("Delete Current Tab",state="disabled")
         self.file_menu.entryconfig("Delete All Tabs",state="disabled")
         self.root.unbind("<Shift-W>")
@@ -317,7 +325,8 @@ class RootClass:
         self.drop.config(state="active")
         self.clear_button.config(state="active")
         self.reset_button.config(state="active")
-        self.breakpoint_button.config(state="active")
+        self.add_breakpoint_button.config(state="active")
+        self.del_breakpoint_button.config(state="active")
         self.file_menu.entryconfig("Delete Current Tab",state="active")
         self.file_menu.entryconfig("Delete All Tabs",state="active")
         #Enable enter binds
@@ -327,7 +336,8 @@ class RootClass:
         self.timestamp_from_entry.bind('<Return>', self.go_to_next_element)
         self.timestamp_to_entry.bind('<Return>', self.search_string)
         self.root.bind("<F2>",self.call_F2Bind)
-        self.root.bind("<F1>",self.call_add_del_breakpoint)
+        self.root.bind("<F3>",self.call_add_breakpoint)
+        self.root.bind("<F4>",self.call_del_breakpoint)
         self.root.bind("<Shift-W>",self.delete_tab)
         self.root.bind("<Control-Shift-KeyPress-W>",self.delete_all_tabs)
 
@@ -398,11 +408,16 @@ class RootClass:
         self.active_tab=self.notebook.select()
         Tabs.Tab.F2Bind(RootClass.tabs_object[self.notebook.index(self.active_tab)],1)
 
-    #Call add_del_breakpoint of Tabs object
-    #Called when F1 is pressed
-    def call_add_del_breakpoint(self,event):
+    #Call add_breakpoint of Tabs object
+    #Called when F3 is pressed
+    def call_add_breakpoint(self,event):
         self.active_tab=self.notebook.select()
         Tabs.Tab.addBreakpoint(RootClass.tabs_object[self.notebook.index(self.active_tab)],1)
+    
+    def call_del_breakpoint(self,event):
+        self.active_tab=self.notebook.select()
+        Tabs.Tab.delBreakpoint(RootClass.tabs_object[self.notebook.index(self.active_tab)],1)
+
             
 
     #Getting all the input fields values and passing it to searchBtnClick
