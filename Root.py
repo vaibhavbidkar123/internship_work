@@ -29,6 +29,7 @@ class RootClass:
         self.file_menu=tk.Menu(self.menubar,tearoff=0)
         self.package_menu=tk.Menu(self.menubar,tearoff=0)
         self.help_menu=tk.Menu(self.menubar,tearoff=0)
+        self.view_menu=tk.Menu(self.menubar,tearoff=0)
         self.file_menu.add_command(label='Open File',command=lambda: self.add_tab(1),accelerator="Ctrl+O")
         self.file_menu.add_command(label='Open Multiple Files',command=lambda: self.add_multiple_tab(1),accelerator="Ctrl+Shift+O")
         self.file_menu.add_command(label='Delete Current Tab',command=lambda: self.delete_tab(1),accelerator="Ctrl+W")
@@ -37,10 +38,13 @@ class RootClass:
         self.file_menu.add_command(label='Exit',command=self.root.destroy)
         self.menubar.add_cascade(label="File",menu=self.file_menu)
         self.menubar.add_cascade(label="Packages",menu=self.package_menu)
+        self.menubar.add_cascade(label="View",menu=self.view_menu)
         self.menubar.add_cascade(label="Help",menu=self.help_menu)
+        
         self.package_menu.add_command(label="Select Packages",command=lambda: self.select_package(1),accelerator="Ctrl+P")
         self.package_menu.add_command(label="Import Package File",command=self.import_package)
         self.help_menu.add_command(label="User Manual",command=self.open_user_manual_window)
+        self.view_menu.add_command(label="Show Breakpoints",command=self.show_breakpoints)
 
         #Initialize packages child window to None
         self.child_window=None
@@ -163,6 +167,19 @@ class RootClass:
             self.disable_binds()
 
         self.active_tab=None
+
+
+    
+    def show_breakpoints(self):
+        breakpoints_window=tk.Toplevel(self.root)
+        self.active_tab=self.notebook.select()
+
+        breakpoints_textwidget=tk.Text(breakpoints_window)
+        breakpoints_textwidget.pack(side=tk.TOP,pady=10)
+        
+        copy_to_clipboard_button=tk.Button(breakpoints_window,text="Copy to Clipboard")
+        copy_to_clipboard_button.pack(side=tk.TOP,pady=((0,10)))
+
 
 
 
