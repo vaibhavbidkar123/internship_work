@@ -74,14 +74,39 @@ class RootClass:
         self.tid_search_entry = tk.Entry(self.tid_frame)
         self.tid_search_entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
         self.tid_frame.grid(row=1, column=3, padx=(25,20), pady=(5, 15), sticky="w")
+  
 
-        #Flag entry
-        self.flag_package_frame=tk.Frame(self.root)
-        self.flag_package_frame.grid(row=0, column=4, pady=(20, 10), sticky="w")
-        self.menu= tk.StringVar()
-        self.menu.set("Flag")
-        self.drop= tk.OptionMenu(self.flag_package_frame, self.menu,"All", "VERBOSE (V)","DEBUG (D)","INFO (I)","WARN (W)","ERROR (E)","FATAL (F)",command=self.search_using_flag)
-        self.drop.grid(row=0, column=0, pady=(20, 10), sticky="w")        
+        #flag entry
+        self.flag_frame=tk.Frame(self.root)
+        self.flag_frame.grid(row=0, column=4, pady=(20, 10), sticky="w")
+        self.flag_entry_menu=tk.Menubutton(self.flag_frame,text="Select Flag",relief="raised")
+        self.flag_entry_menu.grid(row=0, column=0)
+        self.flag_entry_menu.menu=tk.Menu(self.flag_entry_menu,tearoff=0)
+        self.flag_entry_menu["menu"]=self.flag_entry_menu.menu
+        
+        # initialising each flag
+        self.verbose=tk.IntVar()
+        self.debug=tk.IntVar()
+        self.info=tk.IntVar()
+        self.warn=tk.IntVar()
+        self.error=tk.IntVar()
+        self.fatal=tk.IntVar()
+        
+        # initially set all flags true
+        self.verbose.set(1)
+        self.debug.set(1)
+        self.info.set(1)
+        self.warn.set(1)
+        self.error.set(1)
+        self.fatal.set(1)    
+
+        # checkbuttons for flags
+        self.flag_entry_menu.menu.add_checkbutton(label="VERBOSE (V)", variable=self.verbose)
+        self.flag_entry_menu.menu.add_checkbutton(label="DEBUG (D)", variable=self.debug)
+        self.flag_entry_menu.menu.add_checkbutton(label="INFO (I)", variable=self.info)
+        self.flag_entry_menu.menu.add_checkbutton(label="WARN (W)", variable=self.warn)
+        self.flag_entry_menu.menu.add_checkbutton(label="ERROR (E)", variable=self.error)
+        self.flag_entry_menu.menu.add_checkbutton(label="FATAL (F)", variable=self.fatal)
 
         #clear button
         self.clear_button_frame=tk.Frame(self.root)
@@ -298,8 +323,7 @@ class RootClass:
         #Disable all buttons
         self.search_button.config(state="disabled")
         self.search_all_button.config(state="disabled")
-        self.menu.set("Flag")
-        self.drop.config(state="disabled")
+        self.flag_entry_menu.config(state="disabled")
         self.clear_button.config(state="disabled")
         self.reset_button.config(state="disabled")
         self.breakpoint_button.config(state="disabled")
@@ -314,7 +338,7 @@ class RootClass:
         #Enable all buttons
         self.search_button.config(state="active")
         self.search_all_button.config(state="active")
-        self.drop.config(state="active")
+        self.flag_entry_menu.config(state="active")
         self.clear_button.config(state="active")
         self.reset_button.config(state="active")
         self.breakpoint_button.config(state="active")
@@ -380,8 +404,14 @@ class RootClass:
         self.tid_search_entry.delete(0,'end')
         self.timestamp_from_entry.delete(0,'end')
         self.timestamp_to_entry.delete(0,'end')
-        self.menu.set("Flag")
+        self.verbose.set(1)
+        self.debug.set(1)
+        self.info.set(1)
+        self.warn.set(1)
+        self.error.set(1)
+        self.fatal.set(1)
         self.search_string(1)
+
     
     #Clears all fields+breakpoint+packages
     #Called when reset button is pressed
@@ -411,29 +441,27 @@ class RootClass:
         general_search=self.general_search_entry.get()
         pid=self.pid_search_entry.get()
         tid=self.tid_search_entry.get()
-        flagValue=self.menu.get()
         is_timestamp_ok=True
         timestamp_from=self.timestamp_from_entry.get()
         timestamp_to=self.timestamp_to_entry.get()
 
-        #Match for flag value
-        match flagValue:
-            case "Flag":
-                flagValue=""
-            case "All":
-                flagValue=""
-            case "VERBOSE (V)":
-                flagValue="V"
-            case "DEBUG (D)":
-                flagValue="D"
-            case "INFO (I)":
-                flagValue="I"
-            case "WARN (W)":
-                flagValue="W"
-            case "ERROR (E)":
-                flagValue="E"
-            case "FATAL (F)":
-                flagValue="F"
+        # selected flag value appended in selected_flag_list
+        selected_flag_list=[]
+        if self.verbose.get():
+            selected_flag_list.append("V")
+        if self.debug.get():
+            selected_flag_list.append("D")
+        if self.info.get():
+            selected_flag_list.append("I")
+        if self.warn.get():
+            selected_flag_list.append("W")
+        if self.error.get():
+            selected_flag_list.append("E")
+        if self.fatal.get():
+            selected_flag_list.append("F")
+        # if nothing is selected in flag entry
+        if(len(selected_flag_list)==0):
+            selected_flag_list.append(" ")        
 
         #Filtering Timestamp
         #either one is empty ERROR condition
@@ -467,7 +495,7 @@ class RootClass:
 
         self.active_tab=self.notebook.select()
         if(is_timestamp_ok):
-            Tabs.Tab.searchBtnClick(RootClass.tabs_object[self.notebook.index(self.active_tab)],general_search,pid,tid,flagValue,timestamp_from_obj,timestamp_to_obj)
+            Tabs.Tab.searchBtnClick(RootClass.tabs_object[self.notebook.index(self.active_tab)],general_search,pid,tid,selected_flag_list,timestamp_from_obj,timestamp_to_obj)
 
     #Searching in all files
     #Called when search all is pressed
@@ -475,28 +503,30 @@ class RootClass:
         general_search=self.general_search_entry.get()
         pid=self.pid_search_entry.get()
         tid=self.tid_search_entry.get()
-        flagValue=self.menu.get()
         is_timestamp_ok=True
         timestamp_from=self.timestamp_from_entry.get()
         timestamp_to=self.timestamp_to_entry.get()
-        match flagValue:
-            case "Flag":
-                flagValue=""
-            case "All":
-                flagValue=""
-            case "VERBOSE (V)":
-                flagValue="V"
-            case "DEBUG (D)":
-                flagValue="D"
-            case "INFO (I)":
-                flagValue="I"
-            case "WARN (W)":
-                flagValue="W"
-            case "ERROR (E)":
-                flagValue="E"
-            case "FATAL (F)":
-                flagValue="F"
-        
+
+        # selected flag enteries appended here
+        selected_flag_list=[]
+        if self.verbose.get():
+            selected_flag_list.append("V")
+        if self.debug.get():
+            selected_flag_list.append("D")
+        if self.info.get():
+            selected_flag_list.append("I")
+        if self.warn.get():
+            selected_flag_list.append("W")
+        if self.error.get():
+            selected_flag_list.append("E")
+        if self.fatal.get():
+            selected_flag_list.append("F")
+
+        # if nothing is selected 
+        if(len(selected_flag_list)==0):
+            selected_flag_list.append(" ")
+                
+       
         #Filtering Timestamp
         #either one is empty ERROR condition
         if((timestamp_from!="" and timestamp_to=="") or (timestamp_from=="" and timestamp_to!="")):
@@ -529,70 +559,9 @@ class RootClass:
         
         for object in RootClass.tabs_object:
             if(is_timestamp_ok):
-                Tabs.Tab.searchBtnClick(object,general_search,pid,tid,flagValue,timestamp_from_obj,timestamp_to_obj)
+                Tabs.Tab.searchBtnClick(object,general_search,pid,tid,selected_flag_list,timestamp_from_obj,timestamp_to_obj)
     
-    #Searching when flag value is updated
-    #Called when flag value is updated
-    def search_using_flag(self,flagValue):
-        general_search=self.general_search_entry.get()
-        pid=self.pid_search_entry.get()
-        tid=self.tid_search_entry.get()
-        is_timestamp_ok=True
-        timestamp_from=self.timestamp_from_entry.get()
-        timestamp_to=self.timestamp_to_entry.get()
 
-        #Switch-case for assigning flag value according to selected value
-        match flagValue:
-            case "Flag":
-                flagValue=""
-            case "All":
-                flagValue=""
-            case "VERBOSE (V)":
-                flagValue="V"
-            case "DEBUG (D)":
-                flagValue="D"
-            case "INFO (I)":
-                flagValue="I"
-            case "WARN (W)":
-                flagValue="W"
-            case "ERROR (E)":
-                flagValue="E"
-            case "FATAL (F)":
-                flagValue="F"
-        
-        #Filtering Timestamp
-        #either one is empty ERROR condition
-        if((timestamp_from!="" and timestamp_to=="") or (timestamp_from=="" and timestamp_to!="")):
-            timestamp_from_obj=""
-            timestamp_to_obj=""
-            messagebox.showerror("Error", "Please enter From/To time.")
-            is_timestamp_ok=False
-        #both are empty OK condition
-        elif(timestamp_from=="" and timestamp_to==""):
-            timestamp_from_obj=""
-            timestamp_to_obj=""
-        #both are filled OK condition
-        else:
-            #get time format whether in HH:MM:SS or HH:MM:SS.MS format
-            time_format_1=self.getTimeFormat(timestamp_from)
-            time_format_2=self.getTimeFormat(timestamp_to)
-
-            try:
-                timestamp_from_obj = datetime.strptime(timestamp_from,time_format_1).time()
-                timestamp_to_obj=datetime.strptime(timestamp_to,time_format_2).time()
-                if(timestamp_to_obj.microsecond==000000 and time_format_2=='%H:%M:%S'):
-                    timestamp_to_obj=self.addMilliseconds(timestamp_to_obj)
-                    
-            #Timestamp not in valid format ERROR condition
-            except(ValueError):
-                timestamp_from_obj=""
-                timestamp_to_obj=""
-                messagebox.showerror("Error", "Please enter a valid time format.")
-                is_timestamp_ok=False
-
-        self.active_tab=self.notebook.select()
-        if(is_timestamp_ok):
-            Tabs.Tab.searchBtnClick(RootClass.tabs_object[self.notebook.index(self.active_tab)],general_search,pid,tid,flagValue,timestamp_from_obj,timestamp_to_obj)
 
     #To find the time format of timestampTo and timestampFrom
     #Called from search function

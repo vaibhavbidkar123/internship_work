@@ -109,8 +109,8 @@ class Tab:
     
     #Calls general search in particular object (acts as parent search)
     #Called from Root (search_string,search_all,search_using_flag)
-    def searchBtnClick(self,general_search_string,pid,tid,flagValue,timestamp_from_obj,timestamp_to_obj):
-        self.general_search(general_search_string,pid,tid,flagValue,timestamp_from_obj,timestamp_to_obj)
+    def searchBtnClick(self,general_search_string,pid,tid,flag_values,timestamp_from_obj,timestamp_to_obj):
+        self.general_search(general_search_string,pid,tid,flag_values,timestamp_from_obj,timestamp_to_obj)
 
     #To add breakpoint in selected file
     #Called from Root (call_add_breakpoint)
@@ -224,7 +224,7 @@ class Tab:
 
     
                             #--MAIN SEARCH ALGORITHM--#
-    def general_search(self,searchText,pid,tid,flagValue,timestampFrom,timestampTo):
+    def general_search(self,searchText,pid,tid,flag_values,timestampFrom,timestampTo):
         self.breakpointCursor=0 #breakpoint cursor set to zero
         self.existingBreakPoints=set() #breakpoint set is empty initially
         self.matchesfound=0  #reset matchesfound to 0
@@ -264,8 +264,9 @@ class Tab:
                                 
 
                                 #main search filter condition 
-                                if pid or tid or searchText or flagValue or timeRecieved:
-                                    if (not pid or content_pid in pid_list) and (not tid or content_tid in tid_list) and (self.checkSearchText(content,searchText_list)) and (content_flagValue==flagValue or flagValue=="")  and ((timestampFrom=="" and timestampTo=="") or (timestampFrom <= content_time_obj <= timestampTo) ):
+                                # empty flag values control will comes here
+                                if pid or tid or searchText or flag_values or timeRecieved:
+                                    if (not pid or content_pid in pid_list) and (not tid or content_tid in tid_list) and (self.checkSearchText(content,searchText_list)) and (content_flagValue in flag_values or flag_values=="")  and ((timestampFrom=="" and timestampTo=="") or (timestampFrom <= content_time_obj <= timestampTo) ):
                                         if content in list(self.breakpointsLineNum.keys()): #Remap line number
                                             self.breakpointsfound+=1
                                             startIndex=self.text_widget.index(tk.INSERT)
@@ -289,7 +290,7 @@ class Tab:
                             else:
                                 #If content is not in default LOG line format, control come here
                                 #All fields should be empty except general search for this to execute
-                                if not pid and not tid and flagValue=="" and timeRecieved==False and self.checkSearchText(content,searchText_list):
+                                if not pid and not tid and flag_values==["V","D","I","W","E","F"] and timeRecieved==False and self.checkSearchText(content,searchText_list):
                                     if content in list(self.breakpointsLineNum.keys()):
                                         self.breakpointsfound+=1
                                         startIndex=self.text_widget.index(tk.INSERT)
@@ -318,8 +319,8 @@ class Tab:
                                 
     
                                 #main search filter condition 
-                                if pid or tid or searchText or flagValue or timeRecieved:
-                                    if (not pid or content_pid in pid_list) and (not tid or content_tid in tid_list) and (self.checkSearchText(content,searchText_list)) and (content_flagValue==flagValue or flagValue=="")  and ((timestampFrom=="" and timestampTo=="") or (timestampFrom <= content_time_obj <= timestampTo) ):
+                                if pid or tid or searchText or flag_values or timeRecieved:
+                                    if (not pid or content_pid in pid_list) and (not tid or content_tid in tid_list) and (self.checkSearchText(content,searchText_list)) and (content_flagValue in flag_values or flag_values=="")  and ((timestampFrom=="" and timestampTo=="") or (timestampFrom <= content_time_obj <= timestampTo) ):
                                         if content in list(self.breakpointsLineNum.keys()):
                                             self.breakpointsfound+=1
                                             startIndex=self.text_widget.index(tk.INSERT)
@@ -343,7 +344,7 @@ class Tab:
                             else:
                                 #If content is not in default LOG line format, control come here
                                 #All fields should be empty except general search for this to execute
-                                if not pid and not tid and flagValue=="" and timeRecieved==False and self.checkSearchText(content,searchText_list):
+                                if not pid and not tid and flag_values== ["V","D","I","W","E","F"] and timeRecieved==False and self.checkSearchText(content,searchText_list):
                                     if content in list(self.breakpointsLineNum.keys()):
                                         self.breakpointsfound+=1
                                         startIndex=self.text_widget.index(tk.INSERT)
