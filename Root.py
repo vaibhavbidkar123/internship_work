@@ -29,16 +29,16 @@ class RootClass:
         self.file_menu=tk.Menu(self.menubar,tearoff=0)
         self.package_menu=tk.Menu(self.menubar,tearoff=0)
         self.help_menu=tk.Menu(self.menubar,tearoff=0)
-        self.file_menu.add_command(label='Open File',command=lambda: self.add_tab(1),accelerator="Shift+O")
+        self.file_menu.add_command(label='Open File',command=lambda: self.add_tab(1),accelerator="Ctrl+O")
         self.file_menu.add_command(label='Open Multiple Files',command=lambda: self.add_multiple_tab(1),accelerator="Ctrl+Shift+O")
-        self.file_menu.add_command(label='Delete Current Tab',command=lambda: self.delete_tab(1),accelerator="Shift+W")
+        self.file_menu.add_command(label='Delete Current Tab',command=lambda: self.delete_tab(1),accelerator="Ctrl+W")
         self.file_menu.add_command(label='Delete All Tabs',command=lambda: self.delete_all_tabs(1),accelerator="Ctrl+Shift+W")
         self.file_menu.add_separator()
         self.file_menu.add_command(label='Exit',command=self.root.destroy)
         self.menubar.add_cascade(label="File",menu=self.file_menu)
         self.menubar.add_cascade(label="Packages",menu=self.package_menu)
         self.menubar.add_cascade(label="Help",menu=self.help_menu)
-        self.package_menu.add_command(label="Select Packages",command=lambda: self.select_package(1),accelerator="Shift+P")
+        self.package_menu.add_command(label="Select Packages",command=lambda: self.select_package(1),accelerator="Ctrl+P")
         self.package_menu.add_command(label="Import Package File",command=self.import_package)
         self.help_menu.add_command(label="User Manual",command=self.open_user_manual_window)
 
@@ -129,8 +129,8 @@ class RootClass:
         self.root.grid_columnconfigure(3, weight=1)
 
         #Binds for root window, set to on by default
-        self.root.bind("<Shift-O>",self.add_tab)
-        self.root.bind("<Shift-P>",self.select_package)
+        self.root.bind("<Control-o>",self.add_tab)
+        self.root.bind("<Control-p>",self.select_package)
         self.root.bind("<Control-Shift-KeyPress-O>",self.add_multiple_tab)
 
         #Disable all binds if no tab is present
@@ -189,7 +189,7 @@ class RootClass:
 
         #Disable binds to allow only one child window to spawn
         self.package_menu.entryconfig("Select Packages",state="disabled")
-        self.root.unbind('<Shift-P>')
+        self.root.unbind('<Control-p>')
         relative_path_package="cfg\package.json"    #Path of the .json file
         package_path=os.path.normpath(os.path.join(cfg.absolute_path, relative_path_package)) #Path of package file joined with absolute path
 
@@ -275,7 +275,7 @@ class RootClass:
         else:
             self.package_status_label.config(text="")
         self.package_menu.entryconfig("Select Packages",state="active")
-        self.root.bind("<Shift-P>",self.select_package)
+        self.root.bind("<Control-p>",self.select_package)
         if(self.child_window!=None): #Destroy called only when child window is present
             self.child_window.destroy()
 
@@ -305,7 +305,7 @@ class RootClass:
         self.breakpoint_button.config(state="disabled")
         self.file_menu.entryconfig("Delete Current Tab",state="disabled")
         self.file_menu.entryconfig("Delete All Tabs",state="disabled")
-        self.root.unbind("<Shift-W>")
+        self.root.unbind("<Control-w>")
         self.root.unbind("<Control-Shift-KeyPress-W>")
 
     #To re enable binds
@@ -328,7 +328,7 @@ class RootClass:
         self.timestamp_to_entry.bind('<Return>', self.search_string)
         self.root.bind("<F2>",self.call_F2Bind)
         self.root.bind("<F1>",self.call_add_del_breakpoint)
-        self.root.bind("<Shift-W>",self.delete_tab)
+        self.root.bind("<Control-w>",self.delete_tab)
         self.root.bind("<Control-Shift-KeyPress-W>",self.delete_all_tabs)
 
     #Adding a new tab
