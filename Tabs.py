@@ -10,7 +10,7 @@ import Root
 
 class Tab:
 
-    logFormatBreakpoint= r'^.*\n$' #regular expression for breakpoint
+    logFormatBreakpoint= r'^.+\n$' #regular expression for breakpoint
     logFormatSearch= r'^\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}\.\d{3}\s+\d+\s+\d+\s+[A-Za-z]\s+.*\n$' #regular expression for search
 
     def __init__(self,new_tab_object):
@@ -114,52 +114,8 @@ class Tab:
 
     #To add breakpoint in selected file
     #Called from Root (call_add_breakpoint)
-    def addBreakpoint(self,event):
+    def addDelBreakpoint(self,event):
         #TRY-CATCH for getting the selection
-        try:
-            #Get selection and find its line number
-            text=self.text_widget.selection_get()
-            newlineChars=text.count("\n")
-            if(newlineChars>1):
-                raise Exception
-            if not re.match(Tab.logFormatBreakpoint, text):
-                raise Exception
-            count=self.text_widget.count("1.0",tk.SEL_FIRST,"lines")
-        except(Exception):
-            messagebox.showerror("Error", "Invalid breakpoint selection\n(You can only add a log line as a breakpoint.)")
-            return
-        
-        #TRY-CATCH for getting the line number
-        #This logic is used to increment line number by one.
-        #By default, line number starts from zero, but we need it from 1 onwards.
-        try:
-            lineNum=count[0]
-        except(Exception):
-            lineNum=None
-        if(lineNum==None):
-            lineNum=1
-        else:
-            lineNum+=1
-
-        #TRY-CATCH for getting the line number of the selected line.
-        try:
-            lineNumStart=str(lineNum)+".0"
-            lineNumEnd=str(lineNum)+".end"
-            if text not in self.breakpointsLineNum: #Adding a new breakpoint 
-                self.breakpointsLineNum[text]=[[lineNumStart,lineNumEnd]]
-                self.existingBreakPoints.add(text)     
-            else:
-                if [lineNumStart,lineNumEnd] not in self.breakpointsLineNum[text]: #To prevent duplication of same breakpoint line when appending
-                    self.breakpointsLineNum[text].append([lineNumStart,lineNumEnd])
-            #Change the particular line number's colour to red
-            self.text_widget.tag_remove("breakpointremove",lineNumStart, lineNumEnd)
-            self.text_widget.tag_add("breakpointadd", lineNumStart, lineNumEnd)
-        except(Exception):
-            pass
-
-    #To delete breakpoint in selected file
-    #Called from Root (call_del_breakpoint)
-    def delBreakpoint(self,event):
         try:
             #Get selection and find its line number
             text=self.text_widget.selection_get()
@@ -185,15 +141,27 @@ class Tab:
         else:
             lineNum+=1
 
+        #TRY-CATCH for getting the line number of the selected line.
         try:
             lineNumStart=str(lineNum)+".0"
             lineNumEnd=str(lineNum)+".end"
-            if text in self.breakpointsLineNum:
-                del self.breakpointsLineNum[text]     
+
+            if text in list(self.breakpointsLineNum.keys()): #Delete the breakpoint if it already exists
+                for list_item in self.breakpointsLineNum[text]: #Reset colour of all the list items in that breakpoint
+                    startIndex=list_item[0]
+                    endIndex=list_item[1]
+                    self.text_widget.tag_add("breakpointremove", startIndex,endIndex) 
+                    self.breakpointsfound-=1  
+                del self.breakpointsLineNum[text]  #Delete breakpoint   
                 self.existingBreakPoints.remove(text)
-                self.text_widget.tag_add("breakpointremove", lineNumStart, lineNumEnd)
-            else:
-                messagebox.showerror("Error", "Current selection is not a breakpoint.\n(You can only remove a previously added breakpoint.)")
+            else: #Add the breakpoint
+                self.breakpointsLineNum[text]=[[lineNumStart,lineNumEnd]]
+                self.existingBreakPoints.add(text) 
+                self.text_widget.tag_remove("breakpointremove",lineNumStart, lineNumEnd)
+                self.text_widget.tag_add("breakpointadd", lineNumStart, lineNumEnd)
+                self.breakpointsfound+=1
+
+            self.breakpointsfound_label.config(text="Breakpoints found: "+str(self.breakpointsfound)) # print breakpoints found
         except(Exception):
             pass     
 
@@ -386,11 +354,11 @@ class Tab:
                                     self.text_widget.insert(tk.INSERT,content)
                                     self.matchesfound+=1
             except(Exception):
-                messagebox.showerror("Error", "Some error occured")
+                messagebox.showerror("Error", "Some error occured.")
         self.scrollbar.config(command=self.text_widget.yview) #adjust scroll bar as per the content size 
         self.text_widget.config(state=tk.DISABLED,yscroll=self.scrollbar.set)
         self.matchesfound_label.config(text="Entries found: "+str(self.matchesfound)) # print matches found
-        self.breakpointsfound_label.config(text="Breakpoints found: "+str(self.breakpointsfound)) # print matches found
+        self.breakpointsfound_label.config(text="Breakpoints found: "+str(self.breakpointsfound)) # print breakpoints found
         #To add colour to the line
         for breakpoint in self.existingBreakPoints:
                 for list_item in self.breakpointsLineNum[breakpoint]:
