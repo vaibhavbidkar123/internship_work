@@ -161,6 +161,7 @@ class RootClass:
         self.root.bind("<Control-o>",self.add_tab)
         self.root.bind("<Control-p>",self.select_package)
         self.root.bind("<Control-Shift-KeyPress-O>",self.add_multiple_tab)
+        self.root.bind("<Control-f>",lambda event : self.control_f_bind(1))
 
         #Disable all binds if no tab is present
         if(len(RootClass.tabs_object)==0):
@@ -168,25 +169,40 @@ class RootClass:
 
         self.active_tab=None
 
-
+    #Shifts the focus to general search entry on Ctrl+F
+    #Called from self.root.bind in __init__
+    def control_f_bind(self,event):
+        self.general_search_entry.focus_set()
     
+    #Opens a child window and shows the selected breakpoints in the current tab.
+    #Called from menubar (Show Breakpoints)
     def show_breakpoints(self):
         breakpoints_window=tk.Toplevel(self.root)
         breakpoints_window.title("Current Breakpoints")
+        breakpoints_window.iconbitmap(cfg.icon_path)
         breakpoints_window.geometry("1200x500")
 
+        #Gets list of breakpoints for the current tab
         self.active_tab=self.notebook.select()
         list_of_breakpoints=Tabs.Tab.getBreakpoints(RootClass.tabs_object[self.notebook.index(self.active_tab)])
 
-        self.breakpoints_textwidget=tk.Text(breakpoints_window,wrap="word")
-        self.breakpoints_textwidget.pack(pady=10,side=tk.LEFT,fill=tk.BOTH,expand=True)
-
-        self.breakpoints_textwidget.config(state=tk.NORMAL) #set text widget to edit mode
-        self.breakpoints_textwidget.delete("1.0",tk.END) #delete all previous contents of text widget
-        for breakpoint in list_of_breakpoints:
-            self.breakpoints_textwidget.insert(tk.INSERT,breakpoint)
+        breakpoints_textwidget=tk.Text(breakpoints_window,wrap="word")
+        breakpoints_textwidget.tag_config("breakpointadd", foreground="red")
         
-        self.breakpoints_textwidget.config(state=tk.DISABLED)
+        breakpoints_scrollbar=tk.Scrollbar(breakpoints_window,orient='vertical')
+        breakpoints_scrollbar.config(command=breakpoints_textwidget.yview)
+        breakpoints_scrollbar.pack(pady=10,side=tk.RIGHT,fill=tk.Y)
+        breakpoints_textwidget.config(yscrollcommand=breakpoints_scrollbar.set)
+
+        breakpoints_textwidget.pack(pady=10,side=tk.LEFT,fill=tk.BOTH,expand=True)
+
+        breakpoints_textwidget.config(state=tk.NORMAL) #set text widget to edit mode
+        breakpoints_textwidget.delete("1.0",tk.END) #delete all previous contents of text widget
+        for breakpoint in list_of_breakpoints:
+            breakpoints_textwidget.insert(tk.INSERT,breakpoint) #Insert all breakpoints in the text widget
+
+        breakpoints_textwidget.tag_add("breakpointadd", "1.0",tk.END) 
+        breakpoints_textwidget.config(state=tk.DISABLED)
 
 
     # opens user manual

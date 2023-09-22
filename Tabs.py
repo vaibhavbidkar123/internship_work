@@ -31,10 +31,10 @@ class Tab:
         # scrollbar 
         self.scrollbar=tk.Scrollbar(self.text_widget_frame,orient='vertical')
         self.scrollbar.config(command=self.text_widget.yview)
-        self.text_widget.config(yscroll=self.scrollbar.set)
+        self.text_widget.config(yscrollcommand=self.sync_scrollbar_and_linenums)
         
         # line numbers
-        self.linenums = TkLineNumbers(self.text_widget_frame, self.text_widget, colors=("#2197db", "#ffffff"))
+        self.linenums = TkLineNumbers(self.text_widget_frame, self.text_widget, colors=("#6E6E6E", "#F0F0F0"))
         self.text_widget.bind("<<Modified>>", lambda event: self.text_widget_frame.after_idle(self.linenums.redraw), add=True)
 
         # packs of scrollbar,text widget,linenumbers
@@ -66,7 +66,14 @@ class Tab:
         
         #file name to be viewed on tab 
         new_tab_object.add(self.tab_frame,text=self.file_name)
-     
+    
+    #For syncing scroll of scrollbar and linenums
+    #Called from text_widget.config fron __init__
+    def sync_scrollbar_and_linenums(*args):
+        list_args=[*args]
+        list_args[0].scrollbar.set(list_args[1],list_args[2])
+        list_args[0].linenums.redraw()
+
    #Opening a file and displaying all its contents
    #Called from Root (add_tab,add_multiple_tab)
     def open_file(self,file_path_passed):
@@ -370,7 +377,7 @@ class Tab:
             except(Exception):
                 messagebox.showerror("Error", "Some error occured.")
         self.scrollbar.config(command=self.text_widget.yview) #adjust scroll bar as per the content size 
-        self.text_widget.config(state=tk.DISABLED,yscroll=self.scrollbar.set)
+        self.text_widget.config(state=tk.DISABLED)
         self.matchesfound_label.config(text="Entries found: "+str(self.matchesfound)) # print matches found
         self.breakpointsfound_label.config(text="Breakpoints found: "+str(self.breakpointsfound)) # print breakpoints found
         #To add colour to the line
