@@ -7,6 +7,8 @@ import re
 import gzip
 import cfg
 import Root
+from tklinenums import TkLineNumbers
+from tkinter.ttk import Style
 
 class Tab:
 
@@ -21,10 +23,25 @@ class Tab:
         #new text widget will be initialised whenever a new file is opened
         self.text_widget_frame=tk.Frame(self.tab_frame)
         self.text_widget_frame.pack(side=tk.TOP,fill=tk.BOTH,expand=True)
-        self.text_widget=tk.Text(self.text_widget_frame,wrap=tk.WORD)
-        self.text_widget.pack(side=tk.LEFT,fill=tk.BOTH,expand=True)
+
+        # text widget initialized
+        self.text_widget=tk.Text(self.text_widget_frame,wrap=tk.WORD)      
         self.tab_frame.grid(row=0,column=0,pady=0)
+
+        # scrollbar 
+        self.scrollbar=tk.Scrollbar(self.text_widget_frame,orient='vertical')
+        self.scrollbar.config(command=self.text_widget.yview)
+        self.text_widget.config(yscroll=self.scrollbar.set)
         
+        # line numbers
+        self.linenums = TkLineNumbers(self.text_widget_frame, self.text_widget, colors=("#2197db", "#ffffff"))
+        self.text_widget.bind("<<Modified>>", lambda event: self.text_widget_frame.after_idle(self.linenums.redraw), add=True)
+
+        # packs of scrollbar,text widget,linenumbers
+        self.linenums.pack(side=tk.LEFT,fill=tk.Y)
+        self.text_widget.pack(side=tk.LEFT,fill=tk.BOTH,expand=True)
+        self.scrollbar.pack(expand=True, fill=tk.BOTH)
+
         # breakpoints for a particular tab is stored here 
         self.breakpointCursor=0
         self.breakpoints=[]
@@ -46,14 +63,7 @@ class Tab:
         self.breakpointsfound=0
         self.breakpointsfound_label=tk.Label(self.tab_frame,text="")
         self.breakpointsfound_label.pack(side=tk.RIGHT,padx=(0,16))
-
         
-        # scrollbar 
-        self.scrollbar=tk.Scrollbar(self.text_widget_frame,orient='vertical')
-        self.scrollbar.pack(expand=True, fill=tk.BOTH)
-        self.scrollbar.config(command=self.text_widget.yview)
-        self.text_widget.config(yscroll=self.scrollbar.set)
-
         #file name to be viewed on tab 
         new_tab_object.add(self.tab_frame,text=self.file_name)
      

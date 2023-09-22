@@ -55,7 +55,7 @@ class RootClass:
         self.general_search_label.grid(row=0,column=0)
         self.general_search_entry = tk.Entry(self.general_search_frame,width=24)
         self.general_search_entry.grid(row=0,column=1)
-        self.general_search_frame.grid(row=0, column=0, padx=18, pady=(15, 0), columnspan=2, sticky="w")
+        self.general_search_frame.grid(row=0, column=0, padx=18, pady=(15, 0), sticky="w")
         self.package_status_label=tk.Label(self.general_search_frame,text="")
         self.package_status_label.grid(row=1,column=1,sticky="w")
 
@@ -77,7 +77,7 @@ class RootClass:
         self.tid_label.pack(side=tk.LEFT)
         self.tid_search_entry = tk.Entry(self.tid_frame)
         self.tid_search_entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
-        self.tid_frame.grid(row=1, column=3, padx=(25,20), pady=(5, 15), sticky="w")
+        self.tid_frame.grid(row=1, column=3, pady=(5, 15), sticky="w")
   
 
         #flag entry
@@ -124,23 +124,23 @@ class RootClass:
 
         #Timestamp Entry
         self.timestamp_frame=tk.Frame(self.root)
-        self.timestamp_frame.grid(row=0,column=3,sticky="w",pady=10,padx=5)
+        self.timestamp_frame.grid(row=0,column=3,sticky="w")
         self.timestamp_label=tk.Label(self.timestamp_frame,text="Time Stamp")
-        self.timestamp_label.grid(row=0,column=0,sticky="sw",padx=70,columnspan=2)
+        self.timestamp_label.grid(row=0,column=0,sticky="sw",)
 
         self.timestamp_from_label=tk.Label(self.timestamp_frame,text="From:")
         self.timestamp_from_label.grid(row=1,column=0)
         self.timestamp_to_label=tk.Label(self.timestamp_frame,text="To:")
-        self.timestamp_to_label.grid(row=2,column=0,sticky="e",padx=(0,2))
+        self.timestamp_to_label.grid(row=2,column=0,sticky="e",)
 
         self.timestamp_from_entry=tk.Entry(self.timestamp_frame)
-        self.timestamp_from_entry.grid(row=1,column=1)
-        self.timestamp_to_entry=tk.Entry(self.timestamp_frame)
-        self.timestamp_to_entry.grid(row=2,column=1)
+        self.timestamp_from_entry.grid(row=1,column=1,)
+        self.timestamp_to_entry=tk.Entry(self.timestamp_frame,)
+        self.timestamp_to_entry.grid(row=2,column=1,)
 
         #Search Button frame
         self.search_frame=tk.Frame(self.root)
-        self.search_frame.grid(row=1, column=0, columnspan=2, padx=22, pady=(0, 10), sticky="w")
+        self.search_frame.grid(row=1, column=0, padx=22, pady=(0, 10), sticky="w")
 
         #Search in current file button
         self.search_button = tk.Button(self.search_frame, text="Search in file",command=lambda: self.search_string(1))
