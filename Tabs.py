@@ -185,6 +185,9 @@ class Tab:
         except(Exception): #Only exception is for index error, so pass it
             pass
 
+    def getBreakpoints(self):
+        return list(self.breakpointsLineNum.keys())
+
     #Called from Root (call_reset)
     def reset(self):
     #Resets breakpoints + entry

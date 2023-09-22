@@ -172,15 +172,21 @@ class RootClass:
     
     def show_breakpoints(self):
         breakpoints_window=tk.Toplevel(self.root)
+        breakpoints_window.title("Current Breakpoints")
+        breakpoints_window.geometry("1200x500")
+
         self.active_tab=self.notebook.select()
+        list_of_breakpoints=Tabs.Tab.getBreakpoints(RootClass.tabs_object[self.notebook.index(self.active_tab)])
 
-        breakpoints_textwidget=tk.Text(breakpoints_window)
-        breakpoints_textwidget.pack(side=tk.TOP,pady=10)
+        self.breakpoints_textwidget=tk.Text(breakpoints_window,wrap="word")
+        self.breakpoints_textwidget.pack(pady=10,side=tk.LEFT,fill=tk.BOTH,expand=True)
+
+        self.breakpoints_textwidget.config(state=tk.NORMAL) #set text widget to edit mode
+        self.breakpoints_textwidget.delete("1.0",tk.END) #delete all previous contents of text widget
+        for breakpoint in list_of_breakpoints:
+            self.breakpoints_textwidget.insert(tk.INSERT,breakpoint)
         
-        copy_to_clipboard_button=tk.Button(breakpoints_window,text="Copy to Clipboard")
-        copy_to_clipboard_button.pack(side=tk.TOP,pady=((0,10)))
-
-
+        self.breakpoints_textwidget.config(state=tk.DISABLED)
 
 
     # opens user manual
@@ -337,6 +343,8 @@ class RootClass:
         self.timestamp_to_entry.unbind('<Return>')
         self.root.unbind("<F2>")
         self.root.unbind("<F1>")
+        self.root.unbind("<Control-w>")
+        self.root.unbind("<Control-Shift-KeyPress-W>")
         #Disable all buttons
         self.search_button.config(state="disabled")
         self.search_all_button.config(state="disabled")
@@ -346,8 +354,7 @@ class RootClass:
         self.breakpoint_button.config(state="disabled")
         self.file_menu.entryconfig("Delete Current Tab",state="disabled")
         self.file_menu.entryconfig("Delete All Tabs",state="disabled")
-        self.root.unbind("<Control-w>")
-        self.root.unbind("<Control-Shift-KeyPress-W>")
+        self.view_menu.entryconfig("Show Breakpoints",state="disabled")
 
     #To re enable binds
     #Called when atleast one file is present
@@ -361,6 +368,7 @@ class RootClass:
         self.breakpoint_button.config(state="active")
         self.file_menu.entryconfig("Delete Current Tab",state="active")
         self.file_menu.entryconfig("Delete All Tabs",state="active")
+        self.view_menu.entryconfig("Show Breakpoints",state="active")
         #Enable enter binds
         self.general_search_entry.bind('<Return>', self.search_string)
         self.tid_search_entry.bind('<Return>', self.search_string)
