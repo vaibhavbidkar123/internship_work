@@ -73,10 +73,10 @@ class RootClass:
 
         #TID entry
         self.tid_frame = tk.Frame(self.root)
-        self.tid_label = tk.Label(self.tid_frame, text="TID:")
+        self.tid_label = tk.Label(self.tid_frame, text="  TID:")
         self.tid_label.pack(side=tk.LEFT)
         self.tid_search_entry = tk.Entry(self.tid_frame)
-        self.tid_search_entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
+        self.tid_search_entry.pack(side=tk.RIGHT)
         self.tid_frame.grid(row=1, column=3, pady=(5, 15), sticky="w")
   
 
@@ -126,17 +126,21 @@ class RootClass:
         self.timestamp_frame=tk.Frame(self.root)
         self.timestamp_frame.grid(row=0,column=3,sticky="w")
         self.timestamp_label=tk.Label(self.timestamp_frame,text="Time Stamp")
-        self.timestamp_label.grid(row=0,column=0,sticky="sw",)
+        self.timestamp_label.pack(side=tk.TOP)
+        
+        self.timestamp_from_frame=tk.Frame(self.timestamp_frame)
+        self.timestamp_from_frame.pack(side=tk.TOP)
+        self.timestamp_from_label=tk.Label(self.timestamp_from_frame,text="From:")
+        self.timestamp_from_label.pack(side=tk.LEFT)
+        self.timestamp_to_frame=tk.Frame(self.timestamp_frame)
+        self.timestamp_to_frame.pack(side=tk.TOP)
+        self.timestamp_to_label=tk.Label(self.timestamp_to_frame,text="    To:")
+        self.timestamp_to_label.pack(side=tk.LEFT)
 
-        self.timestamp_from_label=tk.Label(self.timestamp_frame,text="From:")
-        self.timestamp_from_label.grid(row=1,column=0)
-        self.timestamp_to_label=tk.Label(self.timestamp_frame,text="To:")
-        self.timestamp_to_label.grid(row=2,column=0,sticky="e",)
-
-        self.timestamp_from_entry=tk.Entry(self.timestamp_frame)
-        self.timestamp_from_entry.grid(row=1,column=1,)
-        self.timestamp_to_entry=tk.Entry(self.timestamp_frame,)
-        self.timestamp_to_entry.grid(row=2,column=1,)
+        self.timestamp_from_entry=tk.Entry(self.timestamp_from_frame)
+        self.timestamp_from_entry.pack(side=tk.RIGHT,fill=tk.X,)
+        self.timestamp_to_entry=tk.Entry(self.timestamp_to_frame)
+        self.timestamp_to_entry.pack(side=tk.RIGHT,fill=tk.X)
 
         #Search Button frame
         self.search_frame=tk.Frame(self.root)
