@@ -27,6 +27,7 @@ Visteon Log File Viewer
 7) Breakpoints
   7.1) Adding/Deleting Breakpoints
   7.2) Cycling Through Breakpoints
+  7.3) Viewing Breakpoints
 8) Packages
   8.1) Selecting Packages
   8.2) Importing Packages
@@ -57,7 +58,7 @@ Visteon Log File Viewer
 
 4. USER INTERFACE OVERVIEW
   4.1 Menus
-      The software has various menu bars such as File, Package, Help.
+      The software has various menu bars such as File, Package, View, Help.
 
   4.2 Text Entry Fields
       There are various text entry fields in the main UI for General Search, PID search, TID search, Timestamp search.
@@ -88,7 +89,7 @@ Visteon Log File Viewer
       1)General Search : It will display log entries which contains the search text given in general search field. 
       2)Thread ID (TID): It will display log entries whose TID is the same as that of the TID field.
       3)Process ID (PID): It will display log entries whose PID is the same as that of the PID field.
-      4)Flags : It will filter the log entries based on the flag that user chooses from the flag dropdown. Available options are VERBOSE, DEBUG, INFO,  WARN, ERROR, FATAL.
+      4)Flags : It will filter the log entries based on the flags that the user chooses from the flag dropdown. Available options are VERBOSE, DEBUG, INFO,  WARN, ERROR, FATAL. The user can select one or more flags, based on the requirement.
       5)Timestamp : It wil filter the log entries which lie in the time range spicified by the user in Timestamp From and Timestamp To fields.
       NOTE: All the filters will work on the AND condition.
 
@@ -108,9 +109,14 @@ Visteon Log File Viewer
 
   7.1 Adding/Deleting Breakpoints
       The user can add or delete breakpoints by selecting a log line and pressing the 'Add/Del Breakpoint' button or by using the shortcut F1. This helps the user to locate a particular log search in the main log file and determine the flow of the log.
+      NOTE: This will mark all the instances of the selected log in the file.
 
   7.2 Cycling Through Breakpoints
-      To cycle through the breakpoints specified by the user, the shortcut F2 has to be used. This will cycle through all the breakpoints in the selected log file
+      To cycle through the breakpoints specified by the user, the shortcut F2 has to be used. This will cycle through all the breakpoints in the selected log file.
+
+  7.3 Viewing Breakpoints
+      To view the breakpoints that have been marked for a particular file, the user has to go to the View Menu and select the 'View Breakpoints' option. This will display all the breakpoints that have been currently marked in the selected file.
+      NOTE: If you add/delete any new breakpoints, you have to re-open the window for the changes to be reflected.
 
 
 8. PACKAGES
@@ -127,7 +133,7 @@ Visteon Log File Viewer
   
   8.3 Package Entry Format
       The format for a package is:
-      "PACKAGE_KEY" : ["VALUE1","VALUE2","VALUEN"]
+      "PACKAGE_KEY" : ["VALUE_1","VALUE_2","VALUE_N"]
       The package is located in the packages.json file.
 
 
@@ -139,10 +145,11 @@ Visteon Log File Viewer
       The 'Reset' button clears all the input fields along with the breakpoints and packages selected by the user.
   
 10. ALL SHORTCUTS
-  SHIFT+O - Open a file
+  CTRL+O - Open a file
   CTRL+SHIFT+O - Open multiple files
-  SHIFT+W - Delete current tab
+  CTRL+W - Delete current tab
   CTRL+SHIFT+W - Delete all tabs
-  SHIFT+P - Select packages
+  CTRL+P - Select packages
+  CTRL+F - Brings the focus to General Search
   F1 - Add/Delete a breakpoint
   F2 - Cycle through breakpoints
